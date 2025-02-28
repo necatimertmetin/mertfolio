@@ -96,7 +96,7 @@ export const Radio = () => {
         sx={{
           padding: 3,
           flex: 1,
-          borderRadius: 1,
+          borderRadius: 3,
           boxShadow: (theme) => theme.custom.inset,
         }}
       >

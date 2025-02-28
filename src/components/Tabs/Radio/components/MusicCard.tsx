@@ -6,7 +6,7 @@ type MusicCardProps = {
 };
 export const MusicCard = ({ nowPlaying = false }: MusicCardProps) => {
   return (
-    <Paper elevation={3} sx={{ padding: "12px", borderRadius: 1, mb: 2 }}>
+    <Paper elevation={3} sx={{ padding: "12px", borderRadius: 2, mb: 2 }}>
       <Stack
         direction={"row"}
         justifyContent={"space-between"}

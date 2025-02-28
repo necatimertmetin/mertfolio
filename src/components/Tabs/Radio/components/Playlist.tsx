@@ -15,7 +15,7 @@ export const Playlist = () => {
           <Paper
             sx={{
               padding: "12px 24px",
-              borderRadius: 1,
+              borderRadius: 3,
               boxShadow: (theme) => theme.custom.inset,
             }}
           >
@@ -26,7 +26,7 @@ export const Playlist = () => {
           <Paper
             sx={{
               padding: 2,
-              borderRadius: 1,
+              borderRadius: 3,
               boxShadow: (theme) => theme.custom.inset,
               height: "460px",
             }}
