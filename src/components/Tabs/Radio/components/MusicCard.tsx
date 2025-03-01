@@ -24,8 +24,24 @@ export const MusicCard = ({
         spacing={3}
       >
         <Box>
-          <Typography variant="body1">{musicDetails?.title}</Typography>
-          <Typography variant="body2">{musicDetails?.artist}</Typography>
+          <Typography
+            variant="body1"
+            width={"5vw"}
+            overflow={"hidden"}
+            textOverflow={"ellipsis"}
+            whiteSpace={"pre"}
+          >
+            {musicDetails?.title}
+          </Typography>
+          <Typography
+            variant="body2"
+            maxWidth={"5vw"}
+            overflow={"hidden"}
+            textOverflow={"ellipsis"}
+            whiteSpace={"pre"}
+          >
+            {musicDetails?.artist}
+          </Typography>
         </Box>
 
         <Stack

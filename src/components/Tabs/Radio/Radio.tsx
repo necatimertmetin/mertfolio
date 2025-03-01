@@ -17,7 +17,7 @@ export const Radio = () => {
     bassLevel,
     musicInfo,
   } = useMusicPlayer(); // Use the context here without wrapping it in provider
-  const [playlistVisible, setPlaylistVisible] = useState(false);
+  const [playlistVisible, setPlaylistVisible] = useState<boolean>(true);
 
   return (
     <Stack
