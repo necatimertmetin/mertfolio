@@ -45,7 +45,7 @@ export const MusicPlayerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [streamAudio] = useState(new Audio()); // We will set the stream URL dynamically
+  const [streamAudio] = useState(new Audio());
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -78,9 +78,8 @@ export const MusicPlayerProvider = ({
     };
   } | null>(null);
 
-  // Fetch the music stream and metadata
-  useEffect(() => {
-    // Fetch the music metadata
+  // Fetch music metadata function
+  const fetchMusicInfo = () => {
     axios
       .get(metadataUrl)
       .then((response) => {
@@ -90,40 +89,47 @@ export const MusicPlayerProvider = ({
       .catch((error) => {
         console.error("Error fetching music info:", error);
       });
+  };
 
-    // Fetch the audio stream using Axios
+  useEffect(() => {
+    // Fetch music metadata and audio stream
+    fetchMusicInfo();
+
     axios
       .get(streamUrl, { responseType: "blob" })
       .then((response) => {
-        const url = URL.createObjectURL(response.data); // Convert blob to URL
-        streamAudio.src = url; // Set the audio element source to the blob URL
+        const url = URL.createObjectURL(response.data);
+        streamAudio.src = url;
       })
       .catch((error) => {
         console.error("Error fetching audio stream:", error);
       });
   }, []);
 
-  // Get bass level using the useAudioAnalyzer hook
   const bassLevel = useAudioAnalyzer(streamAudio);
 
   useEffect(() => {
-    // Set volume and attach event listeners on streamAudio
+    // Set volume and event listeners for streamAudio
     streamAudio.volume = volume;
     streamAudio.addEventListener("canplay", () => {
-      setDuration(streamAudio.duration); // Set duration when ready
+      setDuration(streamAudio.duration);
       console.log("Audio is ready to play");
     });
     streamAudio.addEventListener("timeupdate", () => {
-      setCurrentTime(streamAudio.currentTime); // Update current time
+      setCurrentTime(streamAudio.currentTime);
+    });
+    streamAudio.addEventListener("ended", () => {
+      // Fetch music info again when current track ends
+      fetchMusicInfo(); // Re-fetch music info on track end
     });
     streamAudio.addEventListener("error", (err) => {
       console.error("Error loading audio:", err);
     });
 
     return () => {
-      // Cleanup the event listeners
       streamAudio.removeEventListener("canplay", () => {});
       streamAudio.removeEventListener("timeupdate", () => {});
+      streamAudio.removeEventListener("ended", () => {});
       streamAudio.removeEventListener("error", () => {});
     };
   }, [volume]);
@@ -133,7 +139,7 @@ export const MusicPlayerProvider = ({
       streamAudio.pause();
     } else {
       streamAudio.play().catch((err) => {
-        console.error("Error playing audio:", err); // Handle error
+        console.error("Error playing audio:", err);
       });
     }
     setIsPlaying(!isPlaying);
@@ -149,7 +155,7 @@ export const MusicPlayerProvider = ({
         duration,
         currentTime,
         bassLevel,
-        musicInfo, // Provide the musicInfo in the context
+        musicInfo,
       }}
     >
       {children}

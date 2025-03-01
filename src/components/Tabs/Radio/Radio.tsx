@@ -47,7 +47,7 @@ export const Radio = () => {
           <AlbumCover bassLevel={bassLevel} />
         </Stack>
         <Box>
-          <Typography variant="h3" textAlign={"center"} gutterBottom>
+          <Typography variant="h4" textAlign={"center"} gutterBottom>
             {musicInfo?.currentTrack?.title}
           </Typography>
           <Typography variant="h5" textAlign={"center"}>
