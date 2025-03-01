@@ -46,7 +46,7 @@ export const MusicPlayerProvider = ({
   children: React.ReactNode;
 }) => {
   const [streamAudio] = useState(new Audio());
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState<number>(
@@ -100,6 +100,9 @@ export const MusicPlayerProvider = ({
       .then((response) => {
         const url = URL.createObjectURL(response.data);
         streamAudio.src = url;
+        streamAudio.play().catch((err) => {
+          console.error("Error playing audio:", err);
+        });
       })
       .catch((error) => {
         console.error("Error fetching audio stream:", error);
@@ -121,6 +124,7 @@ export const MusicPlayerProvider = ({
     streamAudio.addEventListener("ended", () => {
       // Fetch music info again when current track ends
       fetchMusicInfo(); // Re-fetch music info on track end
+      setIsPlaying(false); // Stop music on track end
     });
     streamAudio.addEventListener("error", (err) => {
       console.error("Error loading audio:", err);

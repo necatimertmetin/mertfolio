@@ -3,7 +3,7 @@ import { Paper, Stack, Typography, Box, LinearProgress } from "@mui/material";
 import { ActionButtons } from "./components/ActionButtons";
 import { Playlist } from "./components/Playlist";
 import { useMusicPlayer } from "../../../context/useMusicPlayer"; // Removed MusicPlayerProvider import
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AlbumCover from "./components/AlbumCover";
 
 export const Radio = () => {
@@ -18,7 +18,6 @@ export const Radio = () => {
     musicInfo,
   } = useMusicPlayer(); // Use the context here without wrapping it in provider
   const [playlistVisible, setPlaylistVisible] = useState(false);
-  const scale = 0.5 + (bassLevel / 255) * 1.2;
 
   return (
     <Stack
@@ -50,7 +49,7 @@ export const Radio = () => {
           <Typography variant="h4" textAlign={"center"} gutterBottom>
             {musicInfo?.currentTrack?.title}
           </Typography>
-          <Typography variant="h5" textAlign={"center"}>
+          <Typography variant="h5" textAlign={"center"} color="secondary">
             {musicInfo?.currentTrack?.artist}
           </Typography>
         </Box>

@@ -10,8 +10,6 @@ type Props = {
 export default function AlbumCover({ bassLevel = 0 }: Props) {
   const [ripples, setRipples] = useState<{ id: number; level: number }[]>([]);
 
-  //!YENI FIKIR. BASS LEVEL BIR ONCEKINDEN BUYUK OLDUGUNDA RIPPLE OLUSTUR
-
   const handleBassLevelChange = useCallback(
     debounce((level: number) => {
       const id = Date.now();
@@ -67,7 +65,7 @@ export default function AlbumCover({ bassLevel = 0 }: Props) {
             transform: "translate(-50%, -50%)",
             animation: `rippleEffect 1s ease-out`,
             pointerEvents: "none",
-            filter: "blur(2px)",
+            filter: "blur(3px)",
             zIndex: "-100",
           }}
         />
@@ -79,10 +77,10 @@ export default function AlbumCover({ bassLevel = 0 }: Props) {
           objectFit: "contain",
           borderRadius: "100%",
           width: "146px",
+          zIndex: "3",
         }}
       />
 
-      {/* CSS Animasyonu */}
       <style>
         {`
         @keyframes rippleEffect {
