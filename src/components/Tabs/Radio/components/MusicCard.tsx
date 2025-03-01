@@ -3,8 +3,18 @@ import { Box, Paper, Stack, Typography } from "@mui/material";
 
 type MusicCardProps = {
   nowPlaying?: boolean;
+  musicDetails?: {
+    title: string;
+    artist: string;
+    album: string;
+    albumArt: string | null;
+    duration: number;
+  };
 };
-export const MusicCard = ({ nowPlaying = false }: MusicCardProps) => {
+export const MusicCard = ({
+  musicDetails,
+  nowPlaying = false,
+}: MusicCardProps) => {
   return (
     <Paper elevation={3} sx={{ padding: "12px", borderRadius: 2, mb: 2 }}>
       <Stack
@@ -14,8 +24,8 @@ export const MusicCard = ({ nowPlaying = false }: MusicCardProps) => {
         spacing={3}
       >
         <Box>
-          <Typography variant="body1">Lose it</Typography>
-          <Typography variant="body2">Flume . Vic Mensa</Typography>
+          <Typography variant="body1">{musicDetails?.title}</Typography>
+          <Typography variant="body2">{musicDetails?.artist}</Typography>
         </Box>
 
         <Stack

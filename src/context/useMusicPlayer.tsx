@@ -1,7 +1,9 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 import { useAudioAnalyzer } from "../hooks/useAudioAnalyzer";
 
-const songFile = "/HBz - Central Bass Boost (500k) (500K special).mp3";
+const streamUrl = "http://localhost:3001/stream";
+const metadataUrl = "http://localhost:3001/music-info";
 
 interface MusicPlayerContextType {
   isPlaying: boolean;
@@ -10,8 +12,30 @@ interface MusicPlayerContextType {
   setVolume: (volume: number) => void;
   duration: number;
   currentTime: number;
-  bassLevel: number; // Add bassLevel to the context
-  audioRef?: React.RefObject<HTMLAudioElement | null>;
+  bassLevel: number;
+  musicInfo: {
+    currentTrack: {
+      title: string;
+      artist: string;
+      album: string;
+      albumArt: string | null;
+      duration: number;
+    };
+    previousTrack: {
+      title: string;
+      artist: string;
+      album: string;
+      albumArt: string | null;
+      duration: number;
+    };
+    nextTrack: {
+      title: string;
+      artist: string;
+      album: string;
+      albumArt: string | null;
+      duration: number;
+    };
+  } | null;
 }
 
 const MusicPlayerContext = createContext<MusicPlayerContextType | null>(null);
@@ -21,59 +45,98 @@ export const MusicPlayerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const [streamAudio] = useState(new Audio()); // We will set the stream URL dynamically
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-
-  const storedVolume = localStorage.getItem("volume");
   const [volume, setVolume] = useState<number>(
-    storedVolume ? JSON.parse(storedVolume) : 0.1
+    localStorage.getItem("volume")
+      ? JSON.parse(localStorage.getItem("volume")!)
+      : 0.1
   );
+  const [musicInfo, setMusicInfo] = useState<{
+    currentTrack: {
+      title: string;
+      artist: string;
+      album: string;
+      albumArt: string | null;
+      duration: number;
+    };
+    previousTrack: {
+      title: string;
+      artist: string;
+      album: string;
+      albumArt: string | null;
+      duration: number;
+    };
+    nextTrack: {
+      title: string;
+      artist: string;
+      album: string;
+      albumArt: string | null;
+      duration: number;
+    };
+  } | null>(null);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Fetch the music stream and metadata
+  useEffect(() => {
+    // Fetch the music metadata
+    axios
+      .get(metadataUrl)
+      .then((response) => {
+        console.log("Music Info:", response.data);
+        setMusicInfo(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching music info:", error);
+      });
+
+    // Fetch the audio stream using Axios
+    axios
+      .get(streamUrl, { responseType: "blob" })
+      .then((response) => {
+        const url = URL.createObjectURL(response.data); // Convert blob to URL
+        streamAudio.src = url; // Set the audio element source to the blob URL
+      })
+      .catch((error) => {
+        console.error("Error fetching audio stream:", error);
+      });
+  }, []);
 
   // Get bass level using the useAudioAnalyzer hook
-  const bassLevel = useAudioAnalyzer(audioRef.current);
+  const bassLevel = useAudioAnalyzer(streamAudio);
 
   useEffect(() => {
-    localStorage.setItem("volume", JSON.stringify(volume));
+    // Set volume and attach event listeners on streamAudio
+    streamAudio.volume = volume;
+    streamAudio.addEventListener("canplay", () => {
+      setDuration(streamAudio.duration); // Set duration when ready
+      console.log("Audio is ready to play");
+    });
+    streamAudio.addEventListener("timeupdate", () => {
+      setCurrentTime(streamAudio.currentTime); // Update current time
+    });
+    streamAudio.addEventListener("error", (err) => {
+      console.error("Error loading audio:", err);
+    });
+
+    return () => {
+      // Cleanup the event listeners
+      streamAudio.removeEventListener("canplay", () => {});
+      streamAudio.removeEventListener("timeupdate", () => {});
+      streamAudio.removeEventListener("error", () => {});
+    };
   }, [volume]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.volume = volume;
-      audio.addEventListener("loadeddata", () => {
-        setDuration(audio.duration);
-      });
-
-      audio.addEventListener("canplay", () => {
-        if (isPlaying) {
-          audio.play();
-        }
-      });
-
-      const updateTime = () => setCurrentTime(audio.currentTime);
-      audio.addEventListener("timeupdate", updateTime);
-
-      return () => {
-        audio.removeEventListener("timeupdate", updateTime);
-      };
-    }
-  }, [volume, isPlaying]);
-
   const togglePlay = () => {
-    const audio = audioRef.current;
-    if (audio) {
-      if (isPlaying) {
-        audio.pause();
-      } else {
-        audio.play().catch((err) => {
-          console.error("Error playing audio:", err);
-        });
-      }
-      setIsPlaying(!isPlaying);
+    if (isPlaying) {
+      streamAudio.pause();
+    } else {
+      streamAudio.play().catch((err) => {
+        console.error("Error playing audio:", err); // Handle error
+      });
     }
+    setIsPlaying(!isPlaying);
   };
 
   return (
@@ -85,12 +148,11 @@ export const MusicPlayerProvider = ({
         setVolume,
         duration,
         currentTime,
-        bassLevel, // Provide the bassLevel in the context
-        audioRef,
+        bassLevel,
+        musicInfo, // Provide the musicInfo in the context
       }}
     >
       {children}
-      <audio ref={audioRef} src={songFile} />
     </MusicPlayerContext.Provider>
   );
 };

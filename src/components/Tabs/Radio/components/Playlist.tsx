@@ -1,8 +1,10 @@
 import { Paper, Stack, Typography } from "@mui/material";
 import { MusicCard } from "./MusicCard";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMusicPlayer } from "../../../../context/useMusicPlayer";
 
 export const Playlist = () => {
+  const { musicInfo } = useMusicPlayer(); // Use the context here without wrapping it in provider
   return (
     <AnimatePresence>
       <motion.div
@@ -31,9 +33,9 @@ export const Playlist = () => {
               height: "460px",
             }}
           >
-            <MusicCard />
-            <MusicCard nowPlaying />
-            <MusicCard />
+            <MusicCard musicDetails={musicInfo?.previousTrack} />
+            <MusicCard nowPlaying musicDetails={musicInfo?.currentTrack} />
+            <MusicCard musicDetails={musicInfo?.nextTrack} />
           </Paper>
         </Stack>
       </motion.div>

@@ -14,6 +14,10 @@ export const useAudioAnalyzer = (audioElement: HTMLAudioElement | null) => {
     }
     const audioContext = audioContextRef.current;
 
+    if (audioContext.state === "suspended") {
+      audioContext.resume(); // Resume if the context is suspended (due to browser restrictions)
+    }
+
     if (!sourceRef.current) {
       sourceRef.current = audioContext.createMediaElementSource(audioElement);
     }

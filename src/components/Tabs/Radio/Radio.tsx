@@ -3,7 +3,7 @@ import { Paper, Stack, Typography, Box, LinearProgress } from "@mui/material";
 import { ActionButtons } from "./components/ActionButtons";
 import { Playlist } from "./components/Playlist";
 import { useMusicPlayer } from "../../../context/useMusicPlayer"; // Removed MusicPlayerProvider import
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AlbumCover from "./components/AlbumCover";
 
 export const Radio = () => {
@@ -15,9 +15,11 @@ export const Radio = () => {
     togglePlay,
     volume,
     bassLevel,
+    musicInfo,
   } = useMusicPlayer(); // Use the context here without wrapping it in provider
   const [playlistVisible, setPlaylistVisible] = useState(false);
   const scale = 0.5 + (bassLevel / 255) * 1.2;
+
   return (
     <Stack
       direction="row"
@@ -40,80 +42,16 @@ export const Radio = () => {
         <Stack
           alignItems={"center"}
           direction={"row"}
-          justifyContent={"space-between"}
+          justifyContent={"center"}
         >
-          <Box
-            padding={1}
-            sx={{
-              borderRadius: "100%",
-              boxShadow: (theme) => theme.custom.default,
-              background:
-                "radial-gradient(circle, rgba(242,242,242,1) 50%, rgba(203,203,203,1) 100%)",
-              overflow: "hidden",
-            }}
-          >
-            <Box
-              padding={4}
-              sx={{
-                borderRadius: "100%",
-
-                background:
-                  "linear-gradient( rgba(203,203,203,1) 0%, rgba(242,242,242,1) 100%)",
-                boxShadow: (theme) => theme.custom.inset,
-              }}
-            >
-              <Box
-                height={"64px"}
-                width={"64px"}
-                sx={{
-                  borderRadius: "100%",
-                  transform: `scale(${Math.min(Math.max(scale, 0.5), 2)})`,
-                  background: "linear-gradient(145deg, #f2f2f2, #cbcbcb)",
-                  boxShadow: (theme) => theme.custom.default,
-                }}
-              ></Box>
-            </Box>
-          </Box>
           <AlbumCover bassLevel={bassLevel} />
-          <Box
-            padding={1}
-            sx={{
-              borderRadius: "100%",
-              boxShadow: (theme) => theme.custom.default,
-              background:
-                "radial-gradient(circle, rgba(242,242,242,1) 50%, rgba(203,203,203,1) 100%)",
-              overflow: "hidden",
-            }}
-          >
-            <Box
-              padding={4}
-              sx={{
-                borderRadius: "100%",
-
-                background:
-                  "linear-gradient( rgba(203,203,203,1) 0%, rgba(242,242,242,1) 100%)",
-                boxShadow: (theme) => theme.custom.inset,
-              }}
-            >
-              <Box
-                height={"64px"}
-                width={"64px"}
-                sx={{
-                  borderRadius: "100%",
-                  transform: `scale(${Math.min(Math.max(scale, 0.5), 2)})`,
-                  background: "linear-gradient(145deg, #f2f2f2, #cbcbcb)",
-                  boxShadow: (theme) => theme.custom.default,
-                }}
-              ></Box>
-            </Box>
-          </Box>
         </Stack>
         <Box>
-          <Typography variant="h4" textAlign={"center"}>
-            "test"
+          <Typography variant="h3" textAlign={"center"} gutterBottom>
+            {musicInfo?.currentTrack?.title}
           </Typography>
           <Typography variant="h5" textAlign={"center"}>
-            "test"
+            {musicInfo?.currentTrack?.artist}
           </Typography>
         </Box>
 
