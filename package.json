@@ -16,6 +16,7 @@
     "@mui/material": "^6.4.6",
     "@mui/styled-engine-sc": "^6.4.6",
     "framer-motion": "^12.4.7",
+    "lodash.debounce": "^4.0.8",
     "music-metadata": "^11.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",

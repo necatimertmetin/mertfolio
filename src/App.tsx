@@ -15,6 +15,7 @@ import {
 import TabbedInterface from "./components/TabbedInterface";
 import { Home } from "./components/Tabs/Home/Home";
 import { Radio } from "./components/Tabs/Radio/Radio";
+import { MusicPlayerProvider } from "./context/useMusicPlayer";
 
 declare module "@mui/material/styles" {
   interface Theme {
@@ -118,7 +119,9 @@ function App() {
             <Typography variant="h1" letterSpacing={5} fontWeight={200}>
               Portfolio
             </Typography>,
-            <Radio />,
+            <MusicPlayerProvider>
+              <Radio />
+            </MusicPlayerProvider>,
           ]}
         />
       </ThemeProvider>

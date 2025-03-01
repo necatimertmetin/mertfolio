@@ -1,134 +1,122 @@
-import { useEffect, useRef, useState } from "react";
 import { Paper, Stack, Typography, Box, LinearProgress } from "@mui/material";
-import albumCoverExample from "../../../assets/Thriller-Album-Cover.png";
-import * as mm from "music-metadata"; // music-metadata kütüphanesini içe aktar
+
 import { ActionButtons } from "./components/ActionButtons";
 import { Playlist } from "./components/Playlist";
-
-const songFile = "/Mickey Valen, Joey Myron - Chills (Dark Version).mp3";
+import { useMusicPlayer } from "../../../context/useMusicPlayer"; // Removed MusicPlayerProvider import
+import { useState } from "react";
+import AlbumCover from "./components/AlbumCover";
 
 export const Radio = () => {
-  const [playlistVisible, setPlaylistVisible] = useState<boolean>(false);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [currentTime, setCurrentTime] = useState<number>(0);
-  const [duration, setDuration] = useState<number>(0);
-  const [songTitle, setSongTitle] = useState<string>("Unknown Song");
-  const [artistName, setArtistName] = useState<string>("Unknown Artist");
-  const storedVolume = localStorage.getItem("volume");
-  const [volume, setVolume] = useState<number>(
-    storedVolume ? JSON.parse(storedVolume) : 0.1
-  ); // Initial volume set to 0.1
-
-  useEffect(() => {
-    // Save the theme mode to localStorage whenever it changes
-    localStorage.setItem("volume", JSON.stringify(volume));
-  }, [volume]);
-
-  const audioRef = useRef<HTMLAudioElement>(null);
-
-  const fetchMetadata = async () => {
-    const response = await fetch(songFile);
-    const buffer = await response.arrayBuffer();
-
-    mm.parseBuffer(new Uint8Array(buffer))
-      .then((metadata) => {
-        const title = metadata.common.title || "Unknown Song";
-        const artist = metadata.common.artist || "Unknown Artist";
-        setSongTitle(title);
-        setArtistName(artist);
-      })
-      .catch((err) => console.error("Error reading metadata", err));
-  };
-
-  useEffect(() => {
-    fetchMetadata();
-
-    const audio = audioRef.current;
-
-    if (audio) {
-      // Set initial volume when the audio element is ready
-      audio.volume = volume;
-
-      audio.addEventListener("loadedmetadata", () => {
-        setDuration(audio.duration);
-      });
-
-      const updateTime = () => setCurrentTime(audio.currentTime);
-      audio.addEventListener("timeupdate", updateTime);
-
-      return () => {
-        audio.removeEventListener("timeupdate", updateTime);
-      };
-    }
-  }, [volume]); // Add volume as dependency to update when changed
-
-  const togglePlay = () => {
-    const audio = audioRef.current;
-    if (audio) {
-      if (isPlaying) {
-        audio.pause();
-      } else {
-        audio.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
-
-  const handleVolumeChange = (_event: Event, newValue: number | number[]) => {
-    if (audioRef.current) {
-      const volumeValue = newValue as number;
-      audioRef.current.volume = volumeValue;
-      setVolume(volumeValue);
-    }
-  };
-
+  const {
+    currentTime,
+    duration,
+    isPlaying,
+    setVolume,
+    togglePlay,
+    volume,
+    bassLevel,
+  } = useMusicPlayer(); // Use the context here without wrapping it in provider
+  const [playlistVisible, setPlaylistVisible] = useState(false);
+  const scale = 0.5 + (bassLevel / 255) * 1.2;
   return (
     <Stack
       direction="row"
       justifyContent={"space-between"}
-      flex={1}
       spacing={1}
+      flex={1}
     >
       <Paper
         component={Stack}
-        spacing={3}
+        spacing={2}
         justifyContent={"space-between"}
         sx={{
-          padding: 3,
+          padding: 5,
           flex: 1,
           borderRadius: 3,
           boxShadow: (theme) => theme.custom.inset,
+          overflow: "hidden",
         }}
       >
-        <Stack alignItems={"center"}>
-          <Paper
-            elevation={4}
-            component={Stack}
+        <Stack
+          alignItems={"center"}
+          direction={"row"}
+          justifyContent={"space-between"}
+        >
+          <Box
+            padding={1}
             sx={{
               borderRadius: "100%",
-              padding: 1,
+              boxShadow: (theme) => theme.custom.default,
+              background:
+                "radial-gradient(circle, rgba(242,242,242,1) 50%, rgba(203,203,203,1) 100%)",
+              overflow: "hidden",
             }}
-            alignItems={"center"}
-            justifyContent={"center"}
           >
-            <img
-              src={albumCoverExample}
-              style={{
-                objectFit: "contain",
+            <Box
+              padding={4}
+              sx={{
                 borderRadius: "100%",
-                width: "216px",
+
+                background:
+                  "linear-gradient( rgba(203,203,203,1) 0%, rgba(242,242,242,1) 100%)",
+                boxShadow: (theme) => theme.custom.inset,
               }}
-            />
-          </Paper>
+            >
+              <Box
+                height={"64px"}
+                width={"64px"}
+                sx={{
+                  borderRadius: "100%",
+                  transform: `scale(${Math.min(Math.max(scale, 0.5), 2)})`,
+                  background: "linear-gradient(145deg, #f2f2f2, #cbcbcb)",
+                  boxShadow: (theme) => theme.custom.default,
+                }}
+              ></Box>
+            </Box>
+          </Box>
+          <AlbumCover bassLevel={bassLevel} />
+          <Box
+            padding={1}
+            sx={{
+              borderRadius: "100%",
+              boxShadow: (theme) => theme.custom.default,
+              background:
+                "radial-gradient(circle, rgba(242,242,242,1) 50%, rgba(203,203,203,1) 100%)",
+              overflow: "hidden",
+            }}
+          >
+            <Box
+              padding={4}
+              sx={{
+                borderRadius: "100%",
+
+                background:
+                  "linear-gradient( rgba(203,203,203,1) 0%, rgba(242,242,242,1) 100%)",
+                boxShadow: (theme) => theme.custom.inset,
+              }}
+            >
+              <Box
+                height={"64px"}
+                width={"64px"}
+                sx={{
+                  borderRadius: "100%",
+                  transform: `scale(${Math.min(Math.max(scale, 0.5), 2)})`,
+                  background: "linear-gradient(145deg, #f2f2f2, #cbcbcb)",
+                  boxShadow: (theme) => theme.custom.default,
+                }}
+              ></Box>
+            </Box>
+          </Box>
         </Stack>
         <Box>
           <Typography variant="h4" textAlign={"center"}>
-            {songTitle}
+            "test"
           </Typography>
           <Typography variant="h5" textAlign={"center"}>
-            {artistName}
+            "test"
           </Typography>
         </Box>
+
         <Stack spacing={1}>
           <Stack direction={"row"} justifyContent={"space-between"}>
             <Typography variant="body1">
@@ -145,16 +133,16 @@ export const Radio = () => {
           />
         </Stack>
         <ActionButtons
-          playlistVisible={playlistVisible}
-          onListButtonClick={() => setPlaylistVisible(!playlistVisible)}
           isPlaying={isPlaying}
-          onPlayButtonClick={togglePlay}
+          onVolumeChange={(_: Event, newValue: number | number[]) =>
+            setVolume(newValue as number)
+          }
           volume={volume}
-          onVolumeChange={handleVolumeChange}
+          onListButtonClick={() => setPlaylistVisible(!playlistVisible)}
+          onPlayButtonClick={togglePlay}
         />
       </Paper>
       {playlistVisible && <Playlist />}
-      <audio ref={audioRef} src={songFile} />
     </Stack>
   );
 };
