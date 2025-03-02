@@ -6,78 +6,12 @@ import {
   SetStateAction,
   useEffect,
 } from "react";
-import {
-  createTheme,
-  ThemeProvider,
-  CssBaseline,
-  Typography,
-} from "@mui/material";
+import { ThemeProvider, CssBaseline } from "@mui/material";
 import TabbedInterface from "./components/TabbedInterface";
 import { Home } from "./components/Tabs/Home/Home";
 import { Radio } from "./components/Tabs/Radio/Radio";
 import { MusicPlayerProvider } from "./context/useMusicPlayer";
-
-declare module "@mui/material/styles" {
-  interface Theme {
-    custom: {
-      inset: string;
-      default: string;
-    };
-  }
-  interface ThemeOptions {
-    custom?: {
-      inset?: string;
-      default?: string;
-    };
-  }
-}
-
-const lightTheme = createTheme({
-  palette: {
-    mode: "light",
-    secondary: {
-      main: "#686868",
-    },
-    background: {
-      default: "#E2E2E2",
-      paper: "#E2E2E2",
-    },
-    text: {
-      primary: "#686868",
-    },
-  },
-  typography: {
-    fontFamily: "'Montserrat', sans-serif",
-  },
-  custom: {
-    inset: "inset 2px 2px 3px #888888, inset -2px -2px 3px #ffffff",
-    default: " 2px 2px 3px #888888,  -2px -2px 3px #ffffff",
-  },
-});
-
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-    secondary: {
-      main: "#686868",
-    },
-    background: {
-      default: "#121212",
-      paper: "#1E1E1E",
-    },
-    text: {
-      primary: "#E2E2E2",
-    },
-  },
-  typography: {
-    fontFamily: "'Montserrat', sans-serif",
-    fontWeightMedium: "300",
-  },
-  custom: {
-    inset: "inset 2px 2px 3px #1a1a1a, inset -2px -2px 3px #484848",
-    default: " 2px 2px 3px #1a1a1a,  -2px -2px 3px #292929",
-  },
-});
+import { darkTheme, lightTheme } from "./theme";
 
 // Explicitly define the context type
 interface ThemeContextType {
@@ -112,19 +46,12 @@ function App() {
     <ThemeContext.Provider value={{ isDarkMode, setIsDarkMode }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <TabbedInterface
-          tabs={["home", "about me", "portfolio", "radio"]}
-          contents={[
-            <Home />,
-            <Typography variant="h4">About Me Section</Typography>,
-            <Typography variant="h1" letterSpacing={5} fontWeight={200}>
-              Portfolio
-            </Typography>,
-            <MusicPlayerProvider>
-              <Radio />
-            </MusicPlayerProvider>,
-          ]}
-        />
+        <MusicPlayerProvider>
+          <TabbedInterface
+            tabs={["home", "radio"]}
+            contents={[<Home />, <Radio />]}
+          />
+        </MusicPlayerProvider>
       </ThemeProvider>
     </ThemeContext.Provider>
   );

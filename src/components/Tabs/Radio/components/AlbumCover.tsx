@@ -2,12 +2,10 @@ import { Box, Paper, Stack } from "@mui/material";
 import { useEffect, useState, useCallback } from "react";
 import debounce from "lodash.debounce";
 import albumCoverExample from "../../../../assets/channels4_profile.jpg";
+import { useMusicPlayer } from "../../../../context/useMusicPlayer";
 
-type Props = {
-  bassLevel?: number;
-};
-
-export default function AlbumCover({ bassLevel = 0 }: Props) {
+export default function AlbumCover() {
+  const { bassLevel } = useMusicPlayer();
   const [ripples, setRipples] = useState<{ id: number; level: number }[]>([]);
 
   const handleBassLevelChange = useCallback(

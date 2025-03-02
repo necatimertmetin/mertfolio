@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
 import axios from "axios";
 import { useAudioAnalyzer } from "../hooks/useAudioAnalyzer";
 
@@ -45,109 +52,85 @@ export const MusicPlayerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [streamAudio] = useState(new Audio());
+  const streamAudioRef = useRef(new Audio());
+  const streamAudio = streamAudioRef.current;
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState<number>(
-    localStorage.getItem("volume")
-      ? JSON.parse(localStorage.getItem("volume")!)
-      : 0.1
-  );
-  const [musicInfo, setMusicInfo] = useState<{
-    currentTrack: {
-      title: string;
-      artist: string;
-      album: string;
-      albumArt: string | null;
-      duration: number;
-    };
-    previousTrack: {
-      title: string;
-      artist: string;
-      album: string;
-      albumArt: string | null;
-      duration: number;
-    };
-    nextTrack: {
-      title: string;
-      artist: string;
-      album: string;
-      albumArt: string | null;
-      duration: number;
-    };
-  } | null>(null);
+  const [volume, setVolume] = useState<number>(0.1);
+  const [musicInfo, setMusicInfo] =
+    useState<MusicPlayerContextType["musicInfo"]>(null);
+  const prevTrackRef = useRef<string | null>(null);
 
-  // Fetch music metadata function
-  const fetchMusicInfo = () => {
+  const fetchMusicInfo = useCallback(() => {
     axios
       .get(metadataUrl)
       .then((response) => {
-        console.log("Music Info:", response.data);
-        setMusicInfo(response.data);
+        const data = response.data;
+        // Update only if the current track title has changed
+        if (data.currentTrack.title !== prevTrackRef.current) {
+          setMusicInfo(data);
+          setDuration(data.currentTrack.duration);
+          prevTrackRef.current = data.currentTrack.title;
+        }
       })
       .catch((error) => {
         console.error("Error fetching music info:", error);
       });
-  };
+  }, []);
 
-  useEffect(() => {
-    // Fetch music metadata and audio stream
-    fetchMusicInfo();
-
+  const fetchMusicStream = useCallback(() => {
     axios
       .get(streamUrl, { responseType: "blob" })
       .then((response) => {
         const url = URL.createObjectURL(response.data);
         streamAudio.src = url;
-        streamAudio.play().catch((err) => {
-          console.error("Error playing audio:", err);
-        });
+        streamAudio
+          .play()
+          .catch((err) => console.error("Error playing audio:", err));
       })
-      .catch((error) => {
-        console.error("Error fetching audio stream:", error);
-      });
-  }, []);
+      .catch((error) => console.error("Error fetching audio stream:", error));
+  }, [streamAudio]);
+
+  useEffect(() => {
+    fetchMusicStream();
+    fetchMusicInfo();
+  }, [fetchMusicStream, fetchMusicInfo]);
+
+  useEffect(() => {
+    streamAudio.volume = volume;
+    const updateTime = () => setCurrentTime(streamAudio.currentTime);
+    streamAudio.addEventListener("timeupdate", updateTime);
+
+    // Listen for when the song ends
+    const handleSongEnd = () => {
+      // Fetch new music stream and music info when the song ends
+      fetchMusicStream();
+      fetchMusicInfo();
+    };
+
+    streamAudio.addEventListener("ended", handleSongEnd);
+
+    return () => {
+      streamAudio.removeEventListener("timeupdate", updateTime);
+      streamAudio.removeEventListener("ended", handleSongEnd);
+    };
+  }, [volume, fetchMusicStream, fetchMusicInfo]);
 
   const bassLevel = useAudioAnalyzer(streamAudio);
 
-  useEffect(() => {
-    // Set volume and event listeners for streamAudio
-    streamAudio.volume = volume;
-    streamAudio.addEventListener("canplay", () => {
-      setDuration(streamAudio.duration);
-      console.log("Audio is ready to play");
+  const togglePlay = useCallback(() => {
+    setIsPlaying((prev) => {
+      if (prev) {
+        streamAudio.pause();
+      } else {
+        streamAudio
+          .play()
+          .catch((err) => console.error("Error playing audio:", err));
+      }
+      return !prev;
     });
-    streamAudio.addEventListener("timeupdate", () => {
-      setCurrentTime(streamAudio.currentTime);
-    });
-    streamAudio.addEventListener("ended", () => {
-      // Fetch music info again when current track ends
-      fetchMusicInfo(); // Re-fetch music info on track end
-      setIsPlaying(false); // Stop music on track end
-    });
-    streamAudio.addEventListener("error", (err) => {
-      console.error("Error loading audio:", err);
-    });
-
-    return () => {
-      streamAudio.removeEventListener("canplay", () => {});
-      streamAudio.removeEventListener("timeupdate", () => {});
-      streamAudio.removeEventListener("ended", () => {});
-      streamAudio.removeEventListener("error", () => {});
-    };
-  }, [volume]);
-
-  const togglePlay = () => {
-    if (isPlaying) {
-      streamAudio.pause();
-    } else {
-      streamAudio.play().catch((err) => {
-        console.error("Error playing audio:", err);
-      });
-    }
-    setIsPlaying(!isPlaying);
-  };
+  }, [streamAudio]);
 
   return (
     <MusicPlayerContext.Provider

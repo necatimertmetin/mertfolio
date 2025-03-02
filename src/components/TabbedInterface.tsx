@@ -1,10 +1,10 @@
 import { Tabs, Tab, Paper, Stack } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 interface TabbedInterfaceProps {
-  tabs: string[]; // Tab titles
-  contents: React.ReactNode[]; // Content for each tab
+  tabs: string[];
+  contents: React.ReactNode[];
 }
 
 const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
@@ -17,23 +17,32 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
   // Extract the selected tab title from the URL (using query parameter)
   const queryParams = new URLSearchParams(location.search);
   const urlTabTitle = queryParams.get("tab");
-  const initialTabTitle = urlTabTitle || tabs[0]; // Default to first tab if no tab is in the URL
+  const initialTabTitle = urlTabTitle || tabs[0];
 
   const [selectedTab, setSelectedTab] = useState<string>(initialTabTitle);
 
-  // Update the URL when the tab changes
+  // Store mounted components to avoid re-renders
+  const mountedContents = useMemo(() => {
+    return contents.reduce<{ [key: string]: React.ReactNode }>(
+      (acc, content, index) => {
+        acc[tabs[index]] = content;
+        return acc;
+      },
+      {}
+    );
+  }, [contents, tabs]);
+
+  // Handle tab change
   const handleTabChange = (_event: React.ChangeEvent<{}>, newTab: string) => {
     setSelectedTab(newTab);
-    // Update the query parameter in the URL with the tab title
     navigate(`?tab=${newTab}`, { replace: true });
   };
 
   useEffect(() => {
-    // Update the state if the URL tab title changes
     if (urlTabTitle && urlTabTitle !== selectedTab) {
       setSelectedTab(urlTabTitle);
     }
-  }, [location.search, urlTabTitle, selectedTab]);
+  }, [urlTabTitle, selectedTab]);
 
   return (
     <Paper
@@ -54,7 +63,7 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
     >
       <Tabs
         orientation="vertical"
-        value={tabs.indexOf(selectedTab)} // Get the index of the selected tab
+        value={tabs.indexOf(selectedTab)}
         selectionFollowsFocus
         indicatorColor="secondary"
         textColor="inherit"
@@ -71,7 +80,7 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
               boxShadow:
                 selectedTab === tab
                   ? (theme) => theme.custom.inset
-                  : (theme) => theme.custom.default, // Inset when selected, regular box-shadow otherwise
+                  : (theme) => theme.custom.default,
               m: "5px",
               borderTopLeftRadius: "50px",
               borderBottomLeftRadius: "50px",
@@ -80,7 +89,7 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
         ))}
       </Tabs>
 
-      <Stack flex={1}>{contents[tabs.indexOf(selectedTab)]}</Stack>
+      <Stack flex={1}>{mountedContents[selectedTab]}</Stack>
     </Paper>
   );
 };

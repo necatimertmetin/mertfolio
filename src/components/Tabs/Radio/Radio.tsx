@@ -1,22 +1,12 @@
-import { Paper, Stack, Typography, Box, LinearProgress } from "@mui/material";
-
+import { Paper, Stack } from "@mui/material";
 import { ActionButtons } from "./components/ActionButtons";
 import { Playlist } from "./components/Playlist";
-import { useMusicPlayer } from "../../../context/useMusicPlayer"; // Removed MusicPlayerProvider import
 import { useState } from "react";
 import AlbumCover from "./components/AlbumCover";
+import { Progress } from "./components/Progress";
+import { Title } from "./components/Title";
 
 export const Radio = () => {
-  const {
-    currentTime,
-    duration,
-    isPlaying,
-    setVolume,
-    togglePlay,
-    volume,
-    bassLevel,
-    musicInfo,
-  } = useMusicPlayer(); // Use the context here without wrapping it in provider
   const [playlistVisible, setPlaylistVisible] = useState<boolean>(true);
 
   return (
@@ -43,40 +33,14 @@ export const Radio = () => {
           direction={"row"}
           justifyContent={"center"}
         >
-          <AlbumCover bassLevel={bassLevel} />
+          <AlbumCover />
         </Stack>
-        <Box>
-          <Typography variant="h4" textAlign={"center"} gutterBottom>
-            {musicInfo?.currentTrack?.title}
-          </Typography>
-          <Typography variant="h5" textAlign={"center"} color="secondary">
-            {musicInfo?.currentTrack?.artist}
-          </Typography>
-        </Box>
+        <Title />
+        <Progress />
 
-        <Stack spacing={1}>
-          <Stack direction={"row"} justifyContent={"space-between"}>
-            <Typography variant="body1">
-              {new Date(currentTime * 1000).toISOString().substr(14, 5)}
-            </Typography>
-            <Typography variant="body1">
-              {new Date(duration * 1000).toISOString().substr(14, 5)}
-            </Typography>
-          </Stack>
-          <LinearProgress
-            value={(currentTime * 100) / (duration || 1)}
-            variant="determinate"
-            color="secondary"
-          />
-        </Stack>
         <ActionButtons
-          isPlaying={isPlaying}
-          onVolumeChange={(_: Event, newValue: number | number[]) =>
-            setVolume(newValue as number)
-          }
-          volume={volume}
+          playlistVisible={playlistVisible}
           onListButtonClick={() => setPlaylistVisible(!playlistVisible)}
-          onPlayButtonClick={togglePlay}
         />
       </Paper>
       {playlistVisible && <Playlist />}

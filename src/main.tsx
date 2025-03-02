@@ -8,8 +8,6 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <BrowserRouter>
-    {" "}
-    {/* Wrap your app in BrowserRouter */}
     <App />
   </BrowserRouter>
 );

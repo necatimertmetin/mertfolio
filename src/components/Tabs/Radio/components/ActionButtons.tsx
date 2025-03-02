@@ -1,23 +1,17 @@
 import { PlayArrow, Pause, QueueMusic } from "@mui/icons-material";
 import { Stack, Button, Slider } from "@mui/material";
+import { useMusicPlayer } from "../../../../context/useMusicPlayer";
 
 type ActionButtonsProps = {
   playlistVisible?: boolean;
   onListButtonClick: () => void;
-  isPlaying: boolean;
-  onPlayButtonClick: () => void;
-  volume: number; // Volume prop
-  onVolumeChange: (event: Event, newValue: number | number[]) => void;
 };
 
 export const ActionButtons = ({
   playlistVisible = false,
   onListButtonClick,
-  isPlaying,
-  onPlayButtonClick,
-  volume,
-  onVolumeChange,
 }: ActionButtonsProps) => {
+  const { isPlaying, setVolume, togglePlay, volume } = useMusicPlayer();
   return (
     <Stack
       direction={"row"}
@@ -26,7 +20,7 @@ export const ActionButtons = ({
       spacing={5}
     >
       <Button
-        onClick={onPlayButtonClick}
+        onClick={togglePlay}
         disableRipple
         color="secondary"
         sx={{
@@ -45,12 +39,15 @@ export const ActionButtons = ({
       </Button>
       <Slider
         value={volume}
-        onChange={onVolumeChange}
+        onChange={(_: Event, newValue: number | number[]) =>
+          setVolume(newValue as number)
+        }
         min={0}
         max={1}
         step={0.01}
         color="secondary"
       />
+
       <Button
         onClick={onListButtonClick}
         disableRipple
