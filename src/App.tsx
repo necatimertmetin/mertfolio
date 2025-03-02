@@ -12,6 +12,7 @@ import { Home } from "./components/Tabs/Home/Home";
 import { Radio } from "./components/Tabs/Radio/Radio";
 import { MusicPlayerProvider } from "./context/useMusicPlayer";
 import { darkTheme, lightTheme } from "./theme";
+import { Contact } from "./components/Tabs/Contact/Contact";
 
 // Explicitly define the context type
 interface ThemeContextType {
@@ -36,7 +37,6 @@ function App() {
   );
 
   useEffect(() => {
-    // Save the theme mode to localStorage whenever it changes
     localStorage.setItem("isDarkMode", JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
@@ -48,8 +48,8 @@ function App() {
         <CssBaseline />
         <MusicPlayerProvider>
           <TabbedInterface
-            tabs={["home", "radio"]}
-            contents={[<Home />, <Radio />]}
+            tabs={["home", "Contact", "radio"]}
+            contents={[<Home />, <Contact />, <Radio />]}
           />
         </MusicPlayerProvider>
       </ThemeProvider>
