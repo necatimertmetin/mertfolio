@@ -87,7 +87,7 @@ export default function AlbumCover() {
             opacity: 0.8;
           }
           100% {
-            transform: translate(-50%, -50%) scale(1.8);
+            transform: translate(-50%, -50%) scale(2);
             opacity: 0;
           }
         }

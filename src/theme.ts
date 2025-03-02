@@ -30,7 +30,7 @@ export const lightTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: "'Montserrat', sans-serif",
+    fontFamily: "'Raleway', sans-serif",
   },
   custom: {
     inset: "inset 2px 2px 3px #888888, inset -2px -2px 3px #ffffff",
@@ -53,8 +53,7 @@ export const darkTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: "'Montserrat', sans-serif",
-    fontWeightMedium: "300",
+    fontFamily: "'Raleway', sans-serif",
   },
   custom: {
     inset: "inset 2px 2px 3px #1a1a1a, inset -2px -2px 3px #484848",
