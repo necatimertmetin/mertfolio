@@ -4,24 +4,30 @@ import debounce from "lodash.debounce";
 import albumCoverExample from "../../../../assets/channels4_profile.jpg";
 import { useMusicPlayer } from "../../../../context/useMusicPlayer";
 
-export default function AlbumCover() {
+interface AlbumCoverProps {
+  size?: "small" | "default";
+}
+
+export default function AlbumCover({ size = "default" }: AlbumCoverProps) {
   const { bassLevel } = useMusicPlayer();
   const [ripples, setRipples] = useState<{ id: number; level: number }[]>([]);
 
   const handleBassLevelChange = useCallback(
     debounce((level: number) => {
+      if (size === "small") return; // Eğer boyut small ise ripple oluşturma
+
       const id = Date.now();
-      const timeoutId = setTimeout(() => {
+      setRipples((prev) => [...prev, { id, level }]);
+
+      setTimeout(() => {
         setRipples((prev) => prev.filter((ripple) => ripple.id !== id));
       }, 1000);
-
-      setRipples((prev) => [...prev, { id, level, timeoutId }]);
     }, 10),
-    []
+    [size]
   );
 
   useEffect(() => {
-    if (bassLevel > 0) {
+    if (bassLevel > 0 && size !== "small") {
       handleBassLevelChange(bassLevel);
     }
   }, [bassLevel, handleBassLevelChange]);
@@ -47,34 +53,35 @@ export default function AlbumCover() {
       alignItems={"center"}
       justifyContent={"center"}
     >
-      {/* Ripple efektleri */}
-      {ripples.map((ripple) => (
-        <Box
-          key={ripple.id}
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            width: "100%",
-            height: "100%",
-            borderRadius: "50%",
-            border: "1px solid transparent",
-            boxShadow: (theme) => theme.custom.inset,
-            transform: "translate(-50%, -50%)",
-            animation: `rippleEffect 1s ease-out`,
-            pointerEvents: "none",
-            filter: "blur(3px)",
-            zIndex: "-100",
-          }}
-        />
-      ))}
+      {/* Ripple efektlerini sadece default boyutta göster */}
+      {size !== "small" &&
+        ripples.map((ripple) => (
+          <Box
+            key={ripple.id}
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              width: "100%",
+              height: "100%",
+              borderRadius: "50%",
+              border: "1px solid transparent",
+              boxShadow: (theme) => theme.custom.inset,
+              transform: "translate(-50%, -50%)",
+              animation: `rippleEffect 1s ease-out`,
+              pointerEvents: "none",
+              filter: "blur(3px)",
+              zIndex: "-100",
+            }}
+          />
+        ))}
 
       <img
         src={albumCoverExample}
         style={{
           objectFit: "contain",
           borderRadius: "100%",
-          width: "146px",
+          width: size === "small" ? "70px" : "146px",
           zIndex: "3",
         }}
       />

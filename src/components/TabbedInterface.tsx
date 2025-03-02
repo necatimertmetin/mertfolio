@@ -1,6 +1,7 @@
-import { Tabs, Tab, Paper, Stack } from "@mui/material";
+import { Tabs, Tab, Paper, Stack, Box } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import AlbumCover from "./Tabs/Radio/components/AlbumCover";
 
 interface TabbedInterfaceProps {
   tabs: string[];
@@ -14,14 +15,17 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Extract the selected tab title from the URL (using query parameter)
+  // URL'deki "tab" parametresini al
   const queryParams = new URLSearchParams(location.search);
   const urlTabTitle = queryParams.get("tab");
-  const initialTabTitle = urlTabTitle || tabs[0];
 
-  const [selectedTab, setSelectedTab] = useState<string>(initialTabTitle);
+  // İlk tab değerini belirle
+  const initialTab = tabs.includes(urlTabTitle || "") ? urlTabTitle! : tabs[0];
 
-  // Store mounted components to avoid re-renders
+  // Seçili sekmeyi state olarak sakla
+  const [selectedTab, setSelectedTab] = useState<string>(initialTab);
+
+  // Mounted component'leri saklamak için
   const mountedContents = useMemo(() => {
     return contents.reduce<{ [key: string]: React.ReactNode }>(
       (acc, content, index) => {
@@ -32,17 +36,25 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
     );
   }, [contents, tabs]);
 
-  // Handle tab change
-  const handleTabChange = (_event: React.ChangeEvent<{}>, newTab: string) => {
-    setSelectedTab(newTab);
-    navigate(`?tab=${newTab}`, { replace: true });
-  };
-
+  // URL değişirse, state'i güncelle (ama gereksiz render'ı önle)
   useEffect(() => {
-    if (urlTabTitle && urlTabTitle !== selectedTab) {
+    if (
+      urlTabTitle &&
+      urlTabTitle !== selectedTab &&
+      tabs.includes(urlTabTitle)
+    ) {
       setSelectedTab(urlTabTitle);
     }
-  }, [urlTabTitle, selectedTab]);
+  }, [urlTabTitle, tabs]);
+
+  // Tab değiştirildiğinde hem state'i güncelle hem de URL'yi değiştir
+  const handleTabChange = (_event: React.SyntheticEvent, newIndex: number) => {
+    const newTab = tabs[newIndex];
+    if (newTab !== selectedTab) {
+      setSelectedTab(newTab);
+      navigate(`?tab=${newTab}`, { replace: true });
+    }
+  };
 
   return (
     <Paper
@@ -56,6 +68,7 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
         padding: 3,
         borderRadius: 4,
         flexDirection: "row",
+        alignItems: "stretch",
         gap: 3,
         minHeight: "572px",
         minWidth: "960px",
@@ -64,18 +77,52 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
       <Tabs
         orientation="vertical"
         value={tabs.indexOf(selectedTab)}
-        selectionFollowsFocus
         indicatorColor="secondary"
         textColor="inherit"
-        onChange={(_event, newIndex) => handleTabChange(_event, tabs[newIndex])}
-        sx={{
-          minWidth: 120,
-        }}
+        onChange={handleTabChange}
+        sx={{ minWidth: 120 }}
       >
         {tabs.map((tab, index) => (
           <Tab
             key={index}
-            label={tab}
+            label={
+              tab === "radio" ? (
+                <Stack direction="row" alignItems="center" spacing={1} flex={1}>
+                  <Box
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      backgroundColor: "red",
+                      animation: "pulse 1.5s infinite",
+                      "@keyframes pulse": {
+                        "0%": { transform: "scale(1)", opacity: 1 },
+                        "50%": { transform: "scale(1.5)", opacity: 0.6 },
+                        "100%": { transform: "scale(1)", opacity: 1 },
+                      },
+                    }}
+                  />
+                  <span>{tab}</span>
+                  <Box
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      backgroundColor: "red",
+                      visibility: "hidden",
+                      animation: "pulse 3s infinite",
+                      "@keyframes pulse": {
+                        "0%": { transform: "scale(1)", opacity: 1 },
+                        "50%": { transform: "scale(1.5)", opacity: 0.5 },
+                        "100%": { transform: "scale(1)", opacity: 1 },
+                      },
+                    }}
+                  />
+                </Stack>
+              ) : (
+                tab
+              )
+            }
             sx={{
               boxShadow:
                 selectedTab === tab
@@ -87,6 +134,23 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
             }}
           />
         ))}
+        {selectedTab !== "radio" && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "100%",
+              left: "50%",
+              transform: "translate(-50%, -150%)",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setSelectedTab("radio");
+              navigate("?tab=radio", { replace: true });
+            }}
+          >
+            <AlbumCover size="small" />
+          </Box>
+        )}
       </Tabs>
 
       <Stack flex={1}>{mountedContents[selectedTab]}</Stack>
