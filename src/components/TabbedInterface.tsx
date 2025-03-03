@@ -2,6 +2,7 @@ import { Tabs, Tab, Paper, Stack, Box } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import AlbumCover from "./Tabs/Radio/components/AlbumCover";
+import { useMusicPlayer } from "../context/useMusicPlayer";
 
 interface TabbedInterfaceProps {
   tabs: string[];
@@ -14,7 +15,7 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const { isPlaying } = useMusicPlayer();
   // URL'deki "tab" parametresini al
   const queryParams = new URLSearchParams(location.search);
   const urlTabTitle = queryParams.get("tab");
@@ -134,7 +135,7 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
             }}
           />
         ))}
-        {selectedTab !== "radio" && (
+        {selectedTab !== "radio" && isPlaying && (
           <Box
             sx={{
               position: "absolute",

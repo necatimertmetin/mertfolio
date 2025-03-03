@@ -81,7 +81,7 @@ export default function AlbumCover({ size = "default" }: AlbumCoverProps) {
         style={{
           objectFit: "contain",
           borderRadius: "100%",
-          width: size === "small" ? "70px" : "146px",
+          width: size === "small" ? "50px" : "146px",
           zIndex: "3",
         }}
       />

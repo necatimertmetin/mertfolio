@@ -12,6 +12,7 @@ export const SocialButton = ({ icon, onClick, active }: SocialButtonProps) => {
     <Button
       onClick={onClick}
       color="secondary"
+      disableRipple
       sx={{
         boxShadow: active
           ? (theme) => theme.custom.inset

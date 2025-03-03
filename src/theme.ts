@@ -45,7 +45,7 @@ export const darkTheme = createTheme({
       main: "#686868",
     },
     background: {
-      default: "#121212",
+      default: "#1E1E1E",
       paper: "#1E1E1E",
     },
     text: {

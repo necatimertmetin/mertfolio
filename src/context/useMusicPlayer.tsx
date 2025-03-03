@@ -54,7 +54,7 @@ export const MusicPlayerProvider = ({
 }) => {
   const streamAudioRef = useRef(new Audio());
   const streamAudio = streamAudioRef.current;
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false); // Başlangıçta false
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState<number>(0.1);
@@ -67,7 +67,6 @@ export const MusicPlayerProvider = ({
       .get(metadataUrl)
       .then((response) => {
         const data = response.data;
-        // Update only if the current track title has changed
         if (data.currentTrack.title !== prevTrackRef.current) {
           setMusicInfo(data);
           setDuration(data.currentTrack.duration);
@@ -85,28 +84,23 @@ export const MusicPlayerProvider = ({
       .then((response) => {
         const url = URL.createObjectURL(response.data);
         streamAudio.src = url;
-        streamAudio
-          .play()
-          .catch((err) => console.error("Error playing audio:", err));
       })
       .catch((error) => console.error("Error fetching audio stream:", error));
   }, [streamAudio]);
 
   useEffect(() => {
-    fetchMusicStream();
     fetchMusicInfo();
-  }, [fetchMusicStream, fetchMusicInfo]);
+  }, [fetchMusicInfo]);
 
   useEffect(() => {
     streamAudio.volume = volume;
     const updateTime = () => setCurrentTime(streamAudio.currentTime);
     streamAudio.addEventListener("timeupdate", updateTime);
 
-    // Listen for when the song ends
     const handleSongEnd = () => {
-      // Fetch new music stream and music info when the song ends
       fetchMusicStream();
       fetchMusicInfo();
+      streamAudio.play();
     };
 
     streamAudio.addEventListener("ended", handleSongEnd);
@@ -121,16 +115,17 @@ export const MusicPlayerProvider = ({
 
   const togglePlay = useCallback(() => {
     setIsPlaying((prev) => {
-      if (prev) {
-        streamAudio.pause();
-      } else {
+      if (!prev) {
+        fetchMusicStream();
         streamAudio
           .play()
           .catch((err) => console.error("Error playing audio:", err));
+      } else {
+        streamAudio.pause();
       }
       return !prev;
     });
-  }, [streamAudio]);
+  }, [streamAudio, fetchMusicStream]);
 
   return (
     <MusicPlayerContext.Provider

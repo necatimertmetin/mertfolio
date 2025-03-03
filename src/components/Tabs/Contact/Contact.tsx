@@ -1,18 +1,98 @@
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
-import { FaGithub, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
+import {
+  Avatar,
+  Box,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
+import {
+  FaAddressCard,
+  FaGithub,
+  FaInstagram,
+  FaLinkedin,
+  FaYoutube,
+} from "react-icons/fa";
 import { SocialButton } from "./SocialButton";
 import { MdEmail } from "react-icons/md";
 import { useState } from "react";
+import { Mail, Phone } from "@mui/icons-material";
+import { useThemeMode } from "../../../App";
 
 export const Contact = () => {
   const [showForm, setShowForm] = useState(false);
-
+  const { isDarkMode } = useThemeMode();
   return (
     <Box>
-      <Typography variant="h3" gutterBottom>
-        Contact Me
+      <Typography variant="h3" fontWeight={200} gutterBottom>
+        {isDarkMode ? "Let’s Create in the Shadows" : "Let's Build Together"}
       </Typography>
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={2} alignItems={"stretch"}>
+        <Stack flex={1}>
+          <List sx={{ p: 0 }}>
+            <ListItemButton
+              sx={{
+                boxShadow: (theme) => theme.custom.default,
+                borderRadius: 2,
+                mb: 2,
+              }}
+            >
+              <ListItemAvatar>
+                <Avatar
+                  sx={{
+                    backgroundColor: (theme) => theme.palette.secondary.main,
+                  }}
+                >
+                  <Phone />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText secondary="+90 545 317 05 50">Phone</ListItemText>
+            </ListItemButton>
+            <ListItemButton
+              sx={{
+                boxShadow: (theme) => theme.custom.default,
+                borderRadius: 2,
+                mb: 2,
+              }}
+            >
+              <ListItemAvatar>
+                <Avatar
+                  sx={{
+                    backgroundColor: (theme) => theme.palette.secondary.main,
+                  }}
+                >
+                  <Mail />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText secondary="necatimertmetin@gmail.com">
+                Email
+              </ListItemText>
+            </ListItemButton>
+            <ListItemButton
+              sx={{
+                boxShadow: (theme) => theme.custom.default,
+                borderRadius: 2,
+                mb: 2,
+              }}
+            >
+              <ListItemAvatar>
+                <Avatar
+                  sx={{
+                    backgroundColor: (theme) => theme.palette.secondary.main,
+                  }}
+                >
+                  <FaAddressCard />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText secondary="Cumhuriyet Cad. No 87. Orhangazi / Bursa">
+                Address
+              </ListItemText>
+            </ListItemButton>
+          </List>
+        </Stack>
         <Stack
           sx={{ boxShadow: (theme) => theme.custom.inset, borderRadius: 3 }}
           p={2}
@@ -22,86 +102,6 @@ export const Contact = () => {
           <SocialButton icon={<FaLinkedin fontSize={"32px"} />} />
           <SocialButton icon={<FaInstagram fontSize={"32px"} />} />
           <SocialButton icon={<FaYoutube fontSize={"32px"} />} />
-          <SocialButton
-            icon={<MdEmail fontSize={"32px"} />}
-            onClick={() => setShowForm(!showForm)}
-            active={showForm}
-          />
-        </Stack>
-        <Stack flex={1} maxHeight={"360px"}>
-          {/* Map Section */}
-          <Box
-            sx={{
-              boxShadow: (theme) => theme.custom.inset,
-              borderRadius: 3,
-              px: 2,
-              py: showForm ? 0 : 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              maxHeight: showForm ? "0" : "500px", // Use max-height for smooth transition
-              overflow: "hidden", // Hide content when collapsed
-              transition: "max-height 5s ease", // Smooth transition for max-height
-            }}
-          >
-            <Typography variant="h5" gutterBottom>
-              Our Location
-            </Typography>
-            <Typography variant="body1">
-              Address: 123 Example St, City, Country
-            </Typography>
-            <Typography variant="body1">Phone: (123) 456-7890</Typography>
-            <Typography variant="body1">Email: example@example.com</Typography>
-            {/* Insert actual map component here */}
-            <Box sx={{ height: 200, backgroundColor: "#e0e0e0", marginTop: 2 }}>
-              {/* Example placeholder for the map */}
-              Map Here
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              boxShadow: (theme) => theme.custom.inset,
-              borderRadius: 3,
-              p: !showForm ? 0 : 2,
-
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              maxHeight: !showForm ? "0" : "500px", // Use max-height for smooth transition
-              overflow: "hidden", // Hide content when collapsed
-              transition: "max-height 5s ease", // Smooth transition for max-height
-            }}
-          >
-            <Typography variant="h5" gutterBottom>
-              Get in Touch
-            </Typography>
-            <form>
-              <TextField
-                label="Name"
-                variant="outlined"
-                fullWidth
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Email"
-                variant="outlined"
-                fullWidth
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Message"
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={2}
-                sx={{ mb: 2 }}
-              />
-              <Button variant="contained" fullWidth>
-                Send Message
-              </Button>
-            </form>
-          </Box>
-          {/* Contact Form Section */}
         </Stack>
       </Stack>
     </Box>
