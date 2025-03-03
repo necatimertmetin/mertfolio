@@ -23,6 +23,7 @@ export const SocialButton = ({ icon, onClick, active }: SocialButtonProps) => {
         alignItems: "center",
         borderRadius: "10px",
         cursor: "pointer",
+        minWidth: "0px",
       }}
     >
       {icon}
