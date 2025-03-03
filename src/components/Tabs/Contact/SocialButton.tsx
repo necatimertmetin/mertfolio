@@ -5,9 +5,15 @@ type SocialButtonProps = {
   icon: React.ReactNode;
   onClick?: () => void;
   active?: boolean;
+  title?: string;
 };
 
-export const SocialButton = ({ icon, onClick, active }: SocialButtonProps) => {
+export const SocialButton = ({
+  icon,
+  onClick,
+  active,
+  title,
+}: SocialButtonProps) => {
   return (
     <Button
       onClick={onClick}
@@ -24,9 +30,12 @@ export const SocialButton = ({ icon, onClick, active }: SocialButtonProps) => {
         borderRadius: "10px",
         cursor: "pointer",
         minWidth: "0px",
+        gap: 1,
+        textTransform: "capitalize",
       }}
     >
       {icon}
+      {title}
     </Button>
   );
 };

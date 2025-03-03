@@ -54,7 +54,7 @@ export const MusicPlayerProvider = ({
 }) => {
   const streamAudioRef = useRef(new Audio());
   const streamAudio = streamAudioRef.current;
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false); // Başlangıçta false
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState<number>(0.1);
@@ -92,11 +92,8 @@ export const MusicPlayerProvider = ({
   }, [streamAudio]);
 
   useEffect(() => {
-    if (isPlaying) {
-      fetchMusicStream();
-      fetchMusicInfo();
-    }
-  }, [fetchMusicStream, fetchMusicInfo]);
+    fetchMusicInfo();
+  }, [fetchMusicInfo]);
 
   useEffect(() => {
     streamAudio.volume = volume;
@@ -106,11 +103,8 @@ export const MusicPlayerProvider = ({
     const handleSongEnd = () => {
       // Yeni müzik akışını al
       fetchMusicStream();
-      fetchMusicInfo(); // Yeni şarkı bilgilerini al
-      streamAudio.load(); // Yeni şarkıyı yükle
-      streamAudio
-        .play()
-        .catch((err) => console.error("Error playing new audio:", err));
+      fetchMusicInfo();
+      streamAudio.play();
     };
 
     streamAudio.addEventListener("ended", handleSongEnd);

@@ -1,30 +1,35 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Avatar,
   Box,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
   Stack,
   Typography,
 } from "@mui/material";
 import {
-  FaAddressCard,
   FaGithub,
   FaInstagram,
   FaLinkedin,
+  FaTelegram,
+  FaTelegramPlane,
+  FaWhatsapp,
   FaYoutube,
 } from "react-icons/fa";
 import { SocialButton } from "./SocialButton";
-import { MdEmail } from "react-icons/md";
-import { useState } from "react";
-import { Mail, Phone } from "@mui/icons-material";
+import { LocationOn, Mail, Phone } from "@mui/icons-material";
 import { useThemeMode } from "../../../App";
+import React from "react";
 
 export const Contact = () => {
-  const [showForm, setShowForm] = useState(false);
   const { isDarkMode } = useThemeMode();
+  const [expanded, setExpanded] = React.useState<string | false>("panel1");
+
+  const handleChange =
+    (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
+
   return (
     <Box>
       <Typography variant="h3" fontWeight={200} gutterBottom>
@@ -32,71 +37,121 @@ export const Contact = () => {
       </Typography>
       <Stack direction="row" spacing={2} alignItems={"stretch"}>
         <Stack flex={1}>
-          <List sx={{ p: 0 }}>
-            <ListItemButton
-              sx={{
-                boxShadow: (theme) => theme.custom.default,
-                borderRadius: 2,
-                mb: 2,
-              }}
+          <Accordion
+            expanded={expanded === "panel1"}
+            onChange={handleChange("panel1")}
+            sx={{
+              gap: 2,
+              boxShadow: (theme) => theme.custom.default,
+            }}
+          >
+            <AccordionSummary
+              aria-controls="panel1d-content"
+              id="panel1d-header"
             >
-              <ListItemAvatar>
-                <Avatar
-                  sx={{
-                    backgroundColor: (theme) => theme.palette.secondary.main,
-                  }}
-                >
-                  <Phone />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText secondary="+90 545 317 05 50">Phone</ListItemText>
-            </ListItemButton>
-            <ListItemButton
-              sx={{
-                boxShadow: (theme) => theme.custom.default,
-                borderRadius: 2,
-                mb: 2,
-              }}
+              <Avatar
+                sx={{
+                  backgroundColor: (theme) => theme.palette.secondary.main,
+                }}
+              >
+                <Phone />
+              </Avatar>
+              <Box ml={1}>
+                <Typography variant="body1">Phone</Typography>
+                <Typography variant="body2">+90 545 317 05 50</Typography>
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Stack direction={"row-reverse"} spacing={3}>
+                <SocialButton
+                  icon={<FaWhatsapp fontSize={"32px"} />}
+                  title="Whatsapp"
+                />
+                <SocialButton
+                  icon={<FaTelegramPlane fontSize={"32px"} />}
+                  title="Telegram"
+                />
+              </Stack>
+            </AccordionDetails>
+          </Accordion>
+          <Accordion
+            expanded={expanded === "panel2"}
+            onChange={handleChange("panel2")}
+            sx={{
+              gap: 2,
+              boxShadow: (theme) => theme.custom.default,
+            }}
+          >
+            <AccordionSummary
+              aria-controls="panel1d-content"
+              id="panel1d-header"
             >
-              <ListItemAvatar>
-                <Avatar
-                  sx={{
-                    backgroundColor: (theme) => theme.palette.secondary.main,
-                  }}
-                >
-                  <Mail />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText secondary="necatimertmetin@gmail.com">
-                Email
-              </ListItemText>
-            </ListItemButton>
-            <ListItemButton
-              sx={{
-                boxShadow: (theme) => theme.custom.default,
-                borderRadius: 2,
-                mb: 2,
-              }}
+              <Avatar
+                sx={{
+                  backgroundColor: (theme) => theme.palette.secondary.main,
+                }}
+              >
+                <Mail />
+              </Avatar>
+              <Box ml={1}>
+                <Typography variant="body1">Email</Typography>
+                <Typography variant="body2">
+                  necatimertmetin@gmail.com
+                </Typography>
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                eget.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+          <Accordion
+            expanded={expanded === "panel3"}
+            onChange={handleChange("panel3")}
+            sx={{
+              gap: 2,
+              boxShadow: (theme) => theme.custom.default,
+            }}
+          >
+            <AccordionSummary
+              aria-controls="panel1d-content"
+              id="panel1d-header"
             >
-              <ListItemAvatar>
-                <Avatar
-                  sx={{
-                    backgroundColor: (theme) => theme.palette.secondary.main,
-                  }}
-                >
-                  <FaAddressCard />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText secondary="Cumhuriyet Cad. No 87. Orhangazi / Bursa">
-                Address
-              </ListItemText>
-            </ListItemButton>
-          </List>
+              <Avatar
+                sx={{
+                  backgroundColor: (theme) => theme.palette.secondary.main,
+                }}
+              >
+                <LocationOn />
+              </Avatar>
+              <Box ml={1}>
+                <Typography variant="body1">Address</Typography>
+                <Typography variant="body2">
+                  Cumhuriyet Cad. No 87. Orhangazi / Bursa
+                </Typography>
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                eget.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
         </Stack>
         <Stack
           sx={{ boxShadow: (theme) => theme.custom.inset, borderRadius: 3 }}
           p={2}
           spacing={3}
+          justifyContent={"space-evenly"}
         >
           <SocialButton icon={<FaGithub fontSize={"32px"} />} />
           <SocialButton icon={<FaLinkedin fontSize={"32px"} />} />
