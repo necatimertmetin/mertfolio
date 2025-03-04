@@ -36,7 +36,7 @@ export const Radio = () => {
           <AlbumCover />
         </Stack>
         <Title />
-        <Progress />
+        {false && <Progress />}
 
         <ActionButtons
           playlistVisible={playlistVisible}

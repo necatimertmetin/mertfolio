@@ -27,6 +27,7 @@ interface MusicPlayerContextType {
       album: string;
       albumArt: string | null;
       duration: number;
+      elapsedTime: number;
     };
     previousTrack: {
       title: string;
@@ -34,6 +35,7 @@ interface MusicPlayerContextType {
       album: string;
       albumArt: string | null;
       duration: number;
+      elapsedTime: number;
     };
     nextTrack: {
       title: string;
@@ -41,6 +43,7 @@ interface MusicPlayerContextType {
       album: string;
       albumArt: string | null;
       duration: number;
+      elapsedTime: number;
     };
   } | null;
 }
@@ -54,13 +57,16 @@ export const MusicPlayerProvider = ({
 }) => {
   const streamAudioRef = useRef(new Audio());
   const streamAudio = streamAudioRef.current;
-  const [isPlaying, setIsPlaying] = useState<boolean>(false); // Başlangıçta false
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState<number>(0.1);
   const [musicInfo, setMusicInfo] =
     useState<MusicPlayerContextType["musicInfo"]>(null);
   const prevTrackRef = useRef<string | null>(null);
+  const storedVolume = localStorage.getItem("volume");
+  const [volume, setVolume] = useState<number>(
+    storedVolume ? parseFloat(storedVolume) : 0.1
+  );
 
   const fetchMusicInfo = useCallback(() => {
     axios
@@ -101,10 +107,17 @@ export const MusicPlayerProvider = ({
     streamAudio.addEventListener("timeupdate", updateTime);
 
     const handleSongEnd = () => {
-      // Yeni müzik akışını al
-      fetchMusicStream();
-      fetchMusicInfo();
-      streamAudio.play();
+      // Şarkı bittiğinde yeni şarkıyı almak için:
+      if (musicInfo && musicInfo.nextTrack) {
+        setMusicInfo((prev) => ({
+          ...prev!,
+          currentTrack: musicInfo.nextTrack,
+          previousTrack: musicInfo.currentTrack,
+          nextTrack: musicInfo.nextTrack, // burada, bir sonraki şarkıyı güncellediğimizden emin olun
+        }));
+        fetchMusicStream(); // Yeni müzik akışını başlat
+        streamAudio.play(); // Yeni şarkıyı çalmaya başla
+      }
     };
 
     streamAudio.addEventListener("ended", handleSongEnd);
@@ -113,13 +126,14 @@ export const MusicPlayerProvider = ({
       streamAudio.removeEventListener("timeupdate", updateTime);
       streamAudio.removeEventListener("ended", handleSongEnd);
     };
-  }, [volume, fetchMusicStream, fetchMusicInfo]);
+  }, [volume, fetchMusicStream, fetchMusicInfo, musicInfo]);
 
   const bassLevel = useAudioAnalyzer(streamAudio);
 
   const togglePlay = useCallback(() => {
     setIsPlaying((prev) => {
       if (!prev) {
+        fetchMusicInfo();
         fetchMusicStream();
         streamAudio
           .play()
@@ -130,6 +144,10 @@ export const MusicPlayerProvider = ({
       return !prev;
     });
   }, [streamAudio, fetchMusicStream]);
+
+  useEffect(() => {
+    localStorage.setItem("volume", volume.toString());
+  }, [volume]);
 
   return (
     <MusicPlayerContext.Provider

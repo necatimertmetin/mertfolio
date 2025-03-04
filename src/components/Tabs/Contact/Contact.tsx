@@ -11,7 +11,6 @@ import {
   FaGithub,
   FaInstagram,
   FaLinkedin,
-  FaTelegram,
   FaTelegramPlane,
   FaWhatsapp,
   FaYoutube,
@@ -20,10 +19,12 @@ import { SocialButton } from "./SocialButton";
 import { LocationOn, Mail, Phone } from "@mui/icons-material";
 import { useThemeMode } from "../../../App";
 import React from "react";
+import { Location } from "./location/Location";
+import { Email } from "./email/Email";
 
 export const Contact = () => {
   const { isDarkMode } = useThemeMode();
-  const [expanded, setExpanded] = React.useState<string | false>("panel1");
+  const [expanded, setExpanded] = React.useState<string | false>("panel2");
 
   const handleChange =
     (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -40,36 +41,35 @@ export const Contact = () => {
           <Accordion
             expanded={expanded === "panel1"}
             onChange={handleChange("panel1")}
-            sx={{
-              gap: 2,
-              boxShadow: (theme) => theme.custom.default,
-            }}
           >
             <AccordionSummary
               aria-controls="panel1d-content"
               id="panel1d-header"
             >
-              <Avatar
-                sx={{
-                  backgroundColor: (theme) => theme.palette.secondary.main,
-                }}
-              >
-                <Phone />
-              </Avatar>
-              <Box ml={1}>
-                <Typography variant="body1">Phone</Typography>
-                <Typography variant="body2">+90 545 317 05 50</Typography>
-              </Box>
+              <Stack direction={"row"} alignItems={"center"}>
+                <Avatar
+                  sx={{
+                    backgroundColor: (theme) => theme.palette.secondary.main,
+                  }}
+                >
+                  <Phone />
+                </Avatar>
+                <Typography variant="body1" ml={1}>
+                  Phone
+                </Typography>
+              </Stack>
             </AccordionSummary>
             <AccordionDetails>
               <Stack direction={"row-reverse"} spacing={3}>
                 <SocialButton
                   icon={<FaWhatsapp fontSize={"32px"} />}
                   title="Whatsapp"
+                  disabled
                 />
                 <SocialButton
                   icon={<FaTelegramPlane fontSize={"32px"} />}
                   title="Telegram"
+                  link="https://t.me/kurufasulepilav"
                 />
               </Stack>
             </AccordionDetails>
@@ -77,10 +77,6 @@ export const Contact = () => {
           <Accordion
             expanded={expanded === "panel2"}
             onChange={handleChange("panel2")}
-            sx={{
-              gap: 2,
-              boxShadow: (theme) => theme.custom.default,
-            }}
           >
             <AccordionSummary
               aria-controls="panel1d-content"
@@ -101,22 +97,12 @@ export const Contact = () => {
               </Box>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
-              </Typography>
+              <Email />
             </AccordionDetails>
           </Accordion>
           <Accordion
             expanded={expanded === "panel3"}
             onChange={handleChange("panel3")}
-            sx={{
-              gap: 2,
-              boxShadow: (theme) => theme.custom.default,
-            }}
           >
             <AccordionSummary
               aria-controls="panel1d-content"
@@ -136,14 +122,8 @@ export const Contact = () => {
                 </Typography>
               </Box>
             </AccordionSummary>
-            <AccordionDetails>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
-              </Typography>
+            <AccordionDetails sx={{ overflow: "hidden" }}>
+              <Location />
             </AccordionDetails>
           </Accordion>
         </Stack>
@@ -153,10 +133,22 @@ export const Contact = () => {
           spacing={3}
           justifyContent={"space-evenly"}
         >
-          <SocialButton icon={<FaGithub fontSize={"32px"} />} />
-          <SocialButton icon={<FaLinkedin fontSize={"32px"} />} />
-          <SocialButton icon={<FaInstagram fontSize={"32px"} />} />
-          <SocialButton icon={<FaYoutube fontSize={"32px"} />} />
+          <SocialButton
+            link="https://github.com/necatimertmetin"
+            icon={<FaGithub fontSize={"32px"} />}
+          />
+          <SocialButton
+            link="https://www.linkedin.com/in/mrmetin/"
+            icon={<FaLinkedin fontSize={"32px"} />}
+          />
+          <SocialButton
+            link="https://www.instagram.com/metrosso/"
+            icon={<FaInstagram fontSize={"32px"} />}
+          />
+          <SocialButton
+            link="https://www.youtube.com/@metrosso5156"
+            icon={<FaYoutube fontSize={"32px"} />}
+          />
         </Stack>
       </Stack>
     </Box>
