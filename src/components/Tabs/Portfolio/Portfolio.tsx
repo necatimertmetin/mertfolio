@@ -3,7 +3,6 @@ import { Display } from "./components/Display";
 import { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
 import { SocialButton } from "../Contact/SocialButton";
-import { SkipPrevious } from "@mui/icons-material";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
 type Repo = {
