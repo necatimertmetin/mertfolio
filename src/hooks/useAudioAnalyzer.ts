@@ -15,7 +15,7 @@ export const useAudioAnalyzer = (audioElement: HTMLAudioElement | null) => {
     const audioContext = audioContextRef.current;
 
     if (audioContext.state === "suspended") {
-      audioContext.resume(); // Resume if the context is suspended (due to browser restrictions)
+      audioContext.resume();
     }
 
     if (!sourceRef.current) {
@@ -36,7 +36,7 @@ export const useAudioAnalyzer = (audioElement: HTMLAudioElement | null) => {
       analyser.getByteFrequencyData(dataArray);
       const bass =
         dataArray.slice(0, 10).reduce((acc, val) => acc + val, 0) / 10;
-      setBassLevel(bass); // Update state
+      setBassLevel(bass);
       animationFrameId = requestAnimationFrame(getBassLevel);
     };
 
@@ -51,7 +51,7 @@ export const useAudioAnalyzer = (audioElement: HTMLAudioElement | null) => {
         audioContext.close();
       }
     };
-  }, [audioElement]); // Only re-run when audioElement changes
+  }, [audioElement]);
 
   return bassLevel;
 };

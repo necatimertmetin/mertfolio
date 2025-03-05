@@ -1,4 +1,4 @@
-import { Box, Divider, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 import Slider from "react-slick";
 import {
   SiDotnet,
@@ -15,7 +15,6 @@ import {
 } from "react-icons/si";
 import { GrMysql } from "react-icons/gr";
 import { FaJava } from "react-icons/fa";
-import React from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 

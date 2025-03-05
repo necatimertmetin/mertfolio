@@ -2,33 +2,35 @@ import { Button } from "@mui/material";
 import React from "react";
 
 type SocialButtonProps = {
+  width?: number;
   icon: React.ReactNode;
   link?: string;
   active?: boolean;
   title?: string;
   disabled?: boolean;
   onClick?: () => void;
-  iconPosition?: "start" | "end"; // Buradaki hata düzeltildi.
+  iconPosition?: "start" | "end";
 };
 
 export const SocialButton = ({
+  width,
   icon,
   link,
   active,
   title,
   disabled = false,
   onClick,
-  iconPosition = "start", // Varsayılan olarak 'start' ekledik
+  iconPosition = "start",
 }: SocialButtonProps) => {
   return (
     <Button
       disableRipple
       onClick={onClick}
-      component="a" // Change the Button to behave like a link
+      component="a"
       href={link}
       disabled={disabled}
-      target="_blank" // Opens the link in a new tab
-      rel="noopener noreferrer" // Security precaution
+      target="_blank"
+      rel="noopener noreferrer"
       color="secondary"
       sx={{
         textDecorationLine: disabled ? "line-through" : "",
@@ -44,6 +46,7 @@ export const SocialButton = ({
         borderRadius: "10px",
         cursor: "pointer",
         minWidth: "0px",
+        width: width,
         gap: 1,
         textTransform: "capitalize",
         "&:active": {

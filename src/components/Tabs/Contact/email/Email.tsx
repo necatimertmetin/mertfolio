@@ -31,7 +31,7 @@ export const Email = () => {
       .send(serviceID, templateID, data, publicKey)
       .then(() => {
         setButtonText("Sent ✅");
-        reset(); // Formu temizle
+        reset();
         setTimeout(() => setButtonText(<IoSend />), 3000);
       })
       .catch(() => {

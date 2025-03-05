@@ -16,7 +16,6 @@ import { Contact } from "./components/Tabs/Contact/Contact";
 import { AboutMe } from "./components/Tabs/About/AboutMe";
 import { Portfolio } from "./components/Tabs/Portfolio/Portfolio";
 
-// Explicitly define the context type
 interface ThemeContextType {
   isDarkMode: boolean;
   setIsDarkMode: Dispatch<SetStateAction<boolean>>;

@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography, useTheme } from "@mui/material";
 import { Display } from "./components/Display";
 import { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
@@ -29,10 +29,10 @@ const settings = {
 
 export const Portfolio = () => {
   const [repos, setRepos] = useState<Repo[]>([]);
-  const sliderRef = useRef<Slider | null>(null); // Ref'in tipini belirttik
-
+  const sliderRef = useRef<Slider | null>(null);
+  const theme = useTheme();
   const next = () => {
-    sliderRef.current?.slickNext(); // TypeScript hatası düzeltilmiş oldu
+    sliderRef.current?.slickNext();
   };
 
   const previous = () => {
@@ -71,15 +71,17 @@ export const Portfolio = () => {
       </Slider>
       <Stack direction={"row"} justifyContent={"space-between"} mt={1}>
         <SocialButton
+          width={100}
           onClick={previous}
           title="Previous"
-          icon={<FaAngleLeft color="#fff" />}
+          icon={<FaAngleLeft color={theme.palette.text.primary} />}
         />
         <SocialButton
+          width={100}
           onClick={next}
           title="Next"
           iconPosition="end"
-          icon={<FaAngleRight color="#fff" />}
+          icon={<FaAngleRight color={theme.palette.text.primary} />}
         />
       </Stack>
     </Box>

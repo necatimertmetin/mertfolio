@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Typography, useTheme } from "@mui/material";
-import { FaCode, FaExternalLinkAlt } from "react-icons/fa"; // React Icons'dan ikonlar
+import { FaCode, FaExternalLinkAlt } from "react-icons/fa";
 
 type DisplayProps = {
   link: string;
@@ -7,14 +7,14 @@ type DisplayProps = {
 };
 
 export const Display = ({ link, sourceCode }: DisplayProps) => {
-  const theme = useTheme(); // Tema nesnesini al
+  const theme = useTheme();
   return (
     <Stack direction={"row"} justifyContent={"center"}>
       <Box
         sx={{
           border: "8px solid transparent",
           background: theme.palette.background.default,
-          boxShadow: `${theme.custom?.default}, ${theme.custom?.inset}`, // Doğrudan tema kullanımı
+          boxShadow: `${theme.custom?.default}, ${theme.custom?.inset}`,
           borderRadius: 3,
           overflow: "hidden",
           position: "relative",
@@ -24,7 +24,7 @@ export const Display = ({ link, sourceCode }: DisplayProps) => {
             position: "absolute",
             inset: 0,
             pointerEvents: "none",
-            boxShadow: `${theme.custom?.inset}`, // Önce gölgeyi uygula
+            boxShadow: `${theme.custom?.inset}`,
             zIndex: 300,
           },
         }}
@@ -50,8 +50,8 @@ export const Display = ({ link, sourceCode }: DisplayProps) => {
           endIcon={<FaCode color={theme.palette.text.primary} />}
           component="a"
           href={sourceCode}
-          target="_blank" // Opens the link in a new tab
-          rel="noopener noreferrer" // Security precaution
+          target="_blank"
+          rel="noopener noreferrer"
           sx={{
             position: "absolute",
             top: "45px",
@@ -76,8 +76,8 @@ export const Display = ({ link, sourceCode }: DisplayProps) => {
           endIcon={<FaExternalLinkAlt color={theme.palette.text.primary} />}
           component="a"
           href={link}
-          target="_blank" // Opens the link in a new tab
-          rel="noopener noreferrer" // Security precaution
+          target="_blank"
+          rel="noopener noreferrer"
           sx={{
             position: "absolute",
             top: "5px",

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Matter from "matter-js"; // Matter.js import ediyoruz
+import Matter from "matter-js";
 import { useMusicPlayer } from "../../../../context/useMusicPlayer";
 
 type WobblyEyeProps = {
@@ -9,8 +9,8 @@ type WobblyEyeProps = {
 export const WobblyEye = ({ ballSize = 50 }: WobblyEyeProps) => {
   const boxRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [ball, setBall] = useState<Matter.Body | null>(null); // Ball'ı state ile tutacağız
-  const engineRef = useRef<Matter.Engine | null>(null); // Engine'in referansını tut
+  const [ball, setBall] = useState<Matter.Body | null>(null);
+  const engineRef = useRef<Matter.Engine | null>(null);
   const { bassLevel } = useMusicPlayer();
   const clampedBassLevel = Math.max(bassLevel, 110);
 
@@ -18,9 +18,9 @@ export const WobblyEye = ({ ballSize = 50 }: WobblyEyeProps) => {
     clampedBassLevel: number,
     _Bodies: typeof Matter.Bodies
   ) => {
-    const centerX = 125; // Çemberin merkezi X koordinatı
-    const centerY = 125; // Çemberin merkezi Y koordinatı
-    const sides = 32; // Çevreyi oluşturacak kenar sayısı
+    const centerX = 125;
+    const centerY = 125;
+    const sides = 32;
     let circleWalls: Matter.Body[] = [];
 
     for (let i = 0; i < sides; i++) {
@@ -45,14 +45,14 @@ export const WobblyEye = ({ ballSize = 50 }: WobblyEyeProps) => {
     let Render = Matter.Render;
     let World = Matter.World;
     let Bodies = Matter.Bodies;
-    let Runner = Matter.Runner; // Import the Runner
+    let Runner = Matter.Runner;
 
     let engine = Engine.create({});
     engine.gravity.y = -1;
 
-    engineRef.current = engine; // Engine'i kaydediyoruz
+    engineRef.current = engine;
 
-    let runner = Runner.create(); // Create a Runner instance
+    let runner = Runner.create();
 
     if (boxRef.current && canvasRef.current) {
       let render = Render.create({
@@ -67,7 +67,6 @@ export const WobblyEye = ({ ballSize = 50 }: WobblyEyeProps) => {
         },
       });
 
-      // Topu çemberin merkezine yerleştiriyoruz (İlk seferde)
       let initialBall = Bodies.circle(150, 150, ballSize, {
         restitution: 1.15,
         frictionAir: 0,
@@ -76,23 +75,22 @@ export const WobblyEye = ({ ballSize = 50 }: WobblyEyeProps) => {
         },
       });
 
-      setBall(initialBall); // Ball state'ini kaydediyoruz
+      setBall(initialBall);
 
-      // Dünya'ya bariyerleri ve topu ekle
       World.add(engine.world, [
         ...createCircleWalls(clampedBassLevel, Bodies),
         initialBall,
       ]);
 
-      Runner.run(runner, engine); // Use Runner to run the engine
-      Render.run(render); // This starts the render loop
+      Runner.run(runner, engine);
+      Render.run(render);
     }
 
     return () => {
       Matter.World.clear(engine.world, false);
       Matter.Engine.clear(engine);
     };
-  }, []); // İlk başta 1 kez çalışır
+  }, []);
 
   useEffect(() => {
     if (engineRef.current) {
@@ -100,16 +98,14 @@ export const WobblyEye = ({ ballSize = 50 }: WobblyEyeProps) => {
       let Bodies = Matter.Bodies;
       let engine = engineRef.current;
 
-      // Önce eski duvarları temizle
       World.clear(engine.world, false);
 
-      // Yeni duvarları ekle, ancak topu koru
       let circleWalls = createCircleWalls(clampedBassLevel, Bodies);
       if (ball) {
-        World.add(engine.world, [...circleWalls, ball]); // Ball'u tekrar eklemeye gerek yok, zaten var
+        World.add(engine.world, [...circleWalls, ball]);
       }
     }
-  }, [clampedBassLevel]); // Sadece radius değiştiğinde çalışır
+  }, [clampedBassLevel]);
 
   return (
     <div>
@@ -122,7 +118,6 @@ export const WobblyEye = ({ ballSize = 50 }: WobblyEyeProps) => {
       >
         <canvas ref={canvasRef} />
       </div>
-      {/* Yarıçapı değiştirmek için buton */}
     </div>
   );
 };

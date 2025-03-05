@@ -107,7 +107,6 @@ export const MusicPlayerProvider = ({
     streamAudio.addEventListener("timeupdate", updateTime);
 
     const handleSongEnd = () => {
-      // Şarkı bittiğinde yeni şarkıyı almak için:
       if (musicInfo && musicInfo.nextTrack) {
         setMusicInfo((prev) => ({
           ...prev!,

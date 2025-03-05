@@ -16,17 +16,13 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { isPlaying } = useMusicPlayer();
-  // URL'deki "tab" parametresini al
   const queryParams = new URLSearchParams(location.search);
   const urlTabTitle = queryParams.get("tab");
 
-  // İlk tab değerini belirle
   const initialTab = tabs.includes(urlTabTitle || "") ? urlTabTitle! : tabs[0];
 
-  // Seçili sekmeyi state olarak sakla
   const [selectedTab, setSelectedTab] = useState<string>(initialTab);
 
-  // Mounted component'leri saklamak için
   const mountedContents = useMemo(() => {
     return contents.reduce<{ [key: string]: React.ReactNode }>(
       (acc, content, index) => {
@@ -37,7 +33,6 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
     );
   }, [contents, tabs]);
 
-  // URL değişirse, state'i güncelle (ama gereksiz render'ı önle)
   useEffect(() => {
     if (
       urlTabTitle &&
@@ -48,7 +43,6 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
     }
   }, [urlTabTitle, tabs]);
 
-  // Tab değiştirildiğinde hem state'i güncelle hem de URL'yi değiştir
   const handleTabChange = (_event: React.SyntheticEvent, newIndex: number) => {
     const newTab = tabs[newIndex];
     if (newTab !== selectedTab) {
