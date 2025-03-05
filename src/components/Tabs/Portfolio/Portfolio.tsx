@@ -56,7 +56,11 @@ export const Portfolio = () => {
           <Stack spacing={2} key={repo.id}>
             <Typography variant="h4">{repo.name}</Typography>
             <Typography variant="body1">{repo.description}</Typography>
-            <Stack direction={"row"} justifyContent={"center"}>
+            <Stack
+              direction={"row"}
+              justifyContent={"center"}
+              overflow={"visible"}
+            >
               <Display
                 link={`https://necatimertmetin.github.io/${repo.name}/`}
                 sourceCode={repo.html_url}

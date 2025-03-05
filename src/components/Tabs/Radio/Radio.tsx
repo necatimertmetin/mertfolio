@@ -32,7 +32,6 @@ export const Radio = () => {
           alignItems={"center"}
           direction={"row"}
           justifyContent={"center"}
-          spacing={10}
         >
           <AlbumCover />
         </Stack>

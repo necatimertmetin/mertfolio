@@ -60,10 +60,6 @@ export const Display = ({ link, sourceCode }: DisplayProps) => {
             zIndex: 100,
             pointerEvents: "all",
             background: theme.palette.background.default,
-            transition: "left 0.3s", // Animasyon ekleyerek geçişi yumuşatıyoruz
-            "&:hover": {
-              left: 0, // Hover durumunda sol konumu sıfırlıyoruz
-            },
           }}
         >
           <Typography
@@ -91,10 +87,6 @@ export const Display = ({ link, sourceCode }: DisplayProps) => {
             pointerEvents: "all",
 
             background: theme.palette.background.default,
-            transition: "left 0.3s", // Animasyon ekleyerek geçişi yumuşatıyoruz
-            "&:hover": {
-              left: 0, // Hover durumunda sol konumu sıfırlıyoruz
-            },
           }}
         >
           <Typography
