@@ -31,6 +31,7 @@ export const Phone = () => {
           <SocialButton
             icon={<FaWhatsapp fontSize={"32px"} />}
             title="Whatsapp"
+            disabled
           />
           <SocialButton
             icon={<FaTelegramPlane fontSize={"32px"} />}

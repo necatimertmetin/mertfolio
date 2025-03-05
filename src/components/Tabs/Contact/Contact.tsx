@@ -62,14 +62,14 @@ export const Contact = () => {
             <AccordionDetails>
               <Stack direction={"row-reverse"} spacing={3}>
                 <SocialButton
-                  icon={<FaWhatsapp fontSize={"32px"} />}
-                  title="Whatsapp"
-                  disabled
-                />
-                <SocialButton
                   icon={<FaTelegramPlane fontSize={"32px"} />}
                   title="Telegram"
                   link="https://t.me/kurufasulepilav"
+                />
+                <SocialButton
+                  icon={<FaWhatsapp fontSize={"32px"} />}
+                  title="Whatsapp"
+                  disabled
                 />
               </Stack>
             </AccordionDetails>
@@ -131,7 +131,7 @@ export const Contact = () => {
           sx={{ boxShadow: (theme) => theme.custom.inset, borderRadius: 3 }}
           p={2}
           spacing={3}
-          justifyContent={"space-evenly"}
+          justifyContent={"space-around"}
         >
           <SocialButton
             link="https://github.com/necatimertmetin"

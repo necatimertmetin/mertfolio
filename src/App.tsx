@@ -13,6 +13,8 @@ import { Radio } from "./components/Tabs/Radio/Radio";
 import { MusicPlayerProvider } from "./context/useMusicPlayer";
 import { darkTheme, lightTheme } from "./theme";
 import { Contact } from "./components/Tabs/Contact/Contact";
+import { AboutMe } from "./components/Tabs/About/AboutMe";
+import { Portfolio } from "./components/Tabs/Portfolio/Portfolio";
 
 // Explicitly define the context type
 interface ThemeContextType {
@@ -48,8 +50,14 @@ function App() {
         <CssBaseline />
         <MusicPlayerProvider>
           <TabbedInterface
-            tabs={["home", "Contact", "radio"]}
-            contents={[<Home />, <Contact />, <Radio />]}
+            tabs={["home", "Contact", "About", "Portfolio", "radio"]}
+            contents={[
+              <Home />,
+              <Contact />,
+              <AboutMe />,
+              <Portfolio />,
+              <Radio />,
+            ]}
           />
         </MusicPlayerProvider>
       </ThemeProvider>

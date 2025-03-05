@@ -12,6 +12,8 @@ export default function AlbumCover({ size = "default" }: AlbumCoverProps) {
   const { bassLevel } = useMusicPlayer();
   const [ripples, setRipples] = useState<{ id: number; level: number }[]>([]);
 
+  //! iki tane yap bundan goz gibi olsun
+
   const handleBassLevelChange = useCallback(
     debounce((level: number) => {
       if (size === "small") return; // Eğer boyut small ise ripple oluşturma

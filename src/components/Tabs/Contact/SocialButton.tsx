@@ -7,6 +7,8 @@ type SocialButtonProps = {
   active?: boolean;
   title?: string;
   disabled?: boolean;
+  onClick?: () => void;
+  iconPosition?: "start" | "end"; // Buradaki hata düzeltildi.
 };
 
 export const SocialButton = ({
@@ -15,10 +17,13 @@ export const SocialButton = ({
   active,
   title,
   disabled = false,
+  onClick,
+  iconPosition = "start", // Varsayılan olarak 'start' ekledik
 }: SocialButtonProps) => {
   return (
     <Button
       disableRipple
+      onClick={onClick}
       component="a" // Change the Button to behave like a link
       href={link}
       disabled={disabled}
@@ -26,6 +31,7 @@ export const SocialButton = ({
       rel="noopener noreferrer" // Security precaution
       color="secondary"
       sx={{
+        textDecorationLine: disabled ? "line-through" : "",
         boxShadow: disabled
           ? (theme) => theme.custom.inset
           : active
@@ -46,8 +52,17 @@ export const SocialButton = ({
         },
       }}
     >
-      {icon}
-      {title}
+      {iconPosition === "end" ? (
+        <>
+          {title}
+          {icon}
+        </>
+      ) : (
+        <>
+          {icon}
+          {title}
+        </>
+      )}
     </Button>
   );
 };
