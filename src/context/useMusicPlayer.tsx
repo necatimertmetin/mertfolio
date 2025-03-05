@@ -106,16 +106,26 @@ export const MusicPlayerProvider = ({
     const updateTime = () => setCurrentTime(streamAudio.currentTime);
     streamAudio.addEventListener("timeupdate", updateTime);
 
-    const handleSongEnd = () => {
+    const handleSongEnd = async () => {
       if (musicInfo && musicInfo.nextTrack) {
-        setMusicInfo((prev) => ({
-          ...prev!,
-          currentTrack: musicInfo.nextTrack,
-          previousTrack: musicInfo.currentTrack,
-          nextTrack: musicInfo.nextTrack, // burada, bir sonraki şarkıyı güncellediğimizden emin olun
-        }));
-        fetchMusicStream(); // Yeni müzik akışını başlat
-        streamAudio.play(); // Yeni şarkıyı çalmaya başla
+        setTimeout(async () => {
+          setMusicInfo((prev) => ({
+            ...prev!,
+            currentTrack: musicInfo.nextTrack,
+            previousTrack: musicInfo.currentTrack,
+            nextTrack: musicInfo.nextTrack,
+          }));
+
+          streamAudio.pause();
+          streamAudio.src = "";
+          await fetchMusicStream(); // Yeni müziği yükle
+
+          setTimeout(() => {
+            streamAudio
+              .play()
+              .catch((err) => console.error("Error playing new track:", err));
+          }, 1000);
+        }, 2000);
       }
     };
 

@@ -35,7 +35,7 @@ export const useAudioAnalyzer = (audioElement: HTMLAudioElement | null) => {
     const getBassLevel = () => {
       analyser.getByteFrequencyData(dataArray);
       const bass =
-        dataArray.slice(0, 10).reduce((acc, val) => acc + val, 0) / 10;
+        dataArray.slice(0, 12).reduce((acc, val) => acc + val, 0) / 10;
       setBassLevel(bass);
       animationFrameId = requestAnimationFrame(getBassLevel);
     };
