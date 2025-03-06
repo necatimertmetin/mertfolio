@@ -9,8 +9,8 @@ import {
 import axios from "axios";
 import { useAudioAnalyzer } from "../hooks/useAudioAnalyzer";
 
-const streamUrl = "http://localhost:3001/stream";
-const metadataUrl = "http://localhost:3001/music-info";
+const streamUrl = "http://localhost:3001/music/stream";
+const metadataUrl = "http://localhost:3001/music/music-info";
 
 interface MusicPlayerContextType {
   isPlaying: boolean;
@@ -40,12 +40,13 @@ interface MusicPlayerContextType {
     nextTrack: {
       title: string;
       artist: string;
-      album: string;
+      album: string | null;
       albumArt: string | null;
       duration: number;
       elapsedTime: number;
     };
   } | null;
+  streamAvailable: boolean; // Add this field
 }
 
 const MusicPlayerContext = createContext<MusicPlayerContextType | null>(null);
@@ -55,105 +56,87 @@ export const MusicPlayerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const streamAudioRef = useRef(new Audio());
-  const streamAudio = streamAudioRef.current;
+  const streamAudioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [musicInfo, setMusicInfo] =
     useState<MusicPlayerContextType["musicInfo"]>(null);
-  const prevTrackRef = useRef<string | null>(null);
+  const [streamAvailable, setStreamAvailable] = useState<boolean>(false); // Track stream availability
   const storedVolume = localStorage.getItem("volume");
   const [volume, setVolume] = useState<number>(
     storedVolume ? parseFloat(storedVolume) : 0.1
   );
 
+  // Initialize audio when the component is mounted
+  useEffect(() => {
+    if (!streamAudioRef.current) {
+      streamAudioRef.current = new Audio(streamUrl);
+      streamAudioRef.current.crossOrigin = "anonymous"; // CORS issue fix
+    }
+
+    // Check stream availability
+    streamAudioRef.current?.addEventListener("error", () => {
+      setStreamAvailable(false); // If error occurs, set streamAvailable to false
+    });
+
+    return () => {
+      if (streamAudioRef.current) {
+        streamAudioRef.current.pause();
+        streamAudioRef.current.src = "";
+        streamAudioRef.current.load();
+      }
+    };
+  }, []);
+
+  // Fetch music info and update the context state
   const fetchMusicInfo = useCallback(() => {
     axios
       .get(metadataUrl)
       .then((response) => {
         const data = response.data;
-        if (data.currentTrack.title !== prevTrackRef.current) {
-          setMusicInfo(data);
-          setDuration(data.currentTrack.duration);
-          prevTrackRef.current = data.currentTrack.title;
-        }
+        setMusicInfo(data);
+        setDuration(data.currentTrack.duration);
       })
       .catch((error) => {
         console.error("Error fetching music info:", error);
       });
   }, []);
 
-  const fetchMusicStream = useCallback(() => {
-    axios
-      .get(streamUrl, { responseType: "blob" })
-      .then((response) => {
-        const url = URL.createObjectURL(response.data);
-        streamAudio.src = url;
-        streamAudio
-          .play()
-          .catch((err) => console.error("Error playing audio:", err));
-      })
-      .catch((error) => console.error("Error fetching audio stream:", error));
-  }, [streamAudio]);
-
   useEffect(() => {
     fetchMusicInfo();
   }, [fetchMusicInfo]);
 
+  // Set volume and update current time on every playback
   useEffect(() => {
-    streamAudio.volume = volume;
-    const updateTime = () => setCurrentTime(streamAudio.currentTime);
-    streamAudio.addEventListener("timeupdate", updateTime);
+    const streamAudio = streamAudioRef.current;
+    if (streamAudio) {
+      streamAudio.volume = volume;
+      const updateTime = () => setCurrentTime(streamAudio.currentTime);
+      streamAudio.addEventListener("timeupdate", updateTime);
+      return () => {
+        streamAudio.removeEventListener("timeupdate", updateTime);
+      };
+    }
+  }, [volume]);
 
-    const handleSongEnd = async () => {
-      if (musicInfo && musicInfo.nextTrack) {
-        setTimeout(async () => {
-          setMusicInfo((prev) => ({
-            ...prev!,
-            currentTrack: musicInfo.nextTrack,
-            previousTrack: musicInfo.currentTrack,
-            nextTrack: musicInfo.nextTrack,
-          }));
-
-          streamAudio.pause();
-          streamAudio.src = "";
-          await fetchMusicStream(); // Yeni müziği yükle
-
-          setTimeout(() => {
-            streamAudio
-              .play()
-              .catch((err) => console.error("Error playing new track:", err));
-          }, 1000);
-        }, 2000);
-      }
-    };
-
-    streamAudio.addEventListener("ended", handleSongEnd);
-
-    return () => {
-      streamAudio.removeEventListener("timeupdate", updateTime);
-      streamAudio.removeEventListener("ended", handleSongEnd);
-    };
-  }, [volume, fetchMusicStream, fetchMusicInfo, musicInfo]);
-
-  const bassLevel = useAudioAnalyzer(streamAudio);
+  const bassLevel = useAudioAnalyzer(streamAudioRef.current);
 
   const togglePlay = useCallback(() => {
     setIsPlaying((prev) => {
-      if (!prev) {
-        fetchMusicInfo();
-        fetchMusicStream();
+      const streamAudio = streamAudioRef.current;
+      if (!prev && streamAudio && streamAvailable) {
         streamAudio
           .play()
           .catch((err) => console.error("Error playing audio:", err));
-      } else {
+      } else if (streamAudio) {
         streamAudio.pause();
       }
       return !prev;
     });
-  }, [streamAudio, fetchMusicStream]);
+  }, [streamAvailable]);
 
+  // Store the volume setting in localStorage
   useEffect(() => {
     localStorage.setItem("volume", volume.toString());
   }, [volume]);
@@ -169,6 +152,7 @@ export const MusicPlayerProvider = ({
         currentTime,
         bassLevel,
         musicInfo,
+        streamAvailable, // Provide the stream availability
       }}
     >
       {children}
