@@ -15,43 +15,36 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isPlaying, streamAvailable } = useMusicPlayer();
+  const { isPlaying } = useMusicPlayer();
   const queryParams = new URLSearchParams(location.search);
   const urlTabTitle = queryParams.get("tab");
 
-  // Conditionally filter out the "radio" tab if stream is not available
-  const filteredTabs = streamAvailable
-    ? tabs
-    : tabs.filter((tab) => tab !== "radio");
-
-  const initialTab = filteredTabs.includes(urlTabTitle || "")
-    ? urlTabTitle!
-    : filteredTabs[0];
+  const initialTab = tabs.includes(urlTabTitle || "") ? urlTabTitle! : tabs[0];
 
   const [selectedTab, setSelectedTab] = useState<string>(initialTab);
 
   const mountedContents = useMemo(() => {
     return contents.reduce<{ [key: string]: React.ReactNode }>(
       (acc, content, index) => {
-        acc[filteredTabs[index]] = content;
+        acc[tabs[index]] = content;
         return acc;
       },
       {}
     );
-  }, [contents, filteredTabs]);
+  }, [contents, tabs]);
 
   useEffect(() => {
     if (
       urlTabTitle &&
       urlTabTitle !== selectedTab &&
-      filteredTabs.includes(urlTabTitle)
+      tabs.includes(urlTabTitle)
     ) {
       setSelectedTab(urlTabTitle);
     }
-  }, [urlTabTitle, filteredTabs]);
+  }, [urlTabTitle, tabs]);
 
   const handleTabChange = (_event: React.SyntheticEvent, newIndex: number) => {
-    const newTab = filteredTabs[newIndex];
+    const newTab = tabs[newIndex];
     if (newTab !== selectedTab) {
       setSelectedTab(newTab);
       navigate(`?tab=${newTab}`, { replace: true });
@@ -78,13 +71,13 @@ const TabbedInterface: React.FC<TabbedInterfaceProps> = ({
     >
       <Tabs
         orientation="vertical"
-        value={filteredTabs.indexOf(selectedTab)}
+        value={tabs.indexOf(selectedTab)}
         indicatorColor="secondary"
         textColor="inherit"
         onChange={handleTabChange}
         sx={{ minWidth: 120 }}
       >
-        {filteredTabs.map((tab, index) => (
+        {tabs.map((tab, index) => (
           <Tab
             key={index}
             label={
