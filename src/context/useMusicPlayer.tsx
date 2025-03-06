@@ -9,8 +9,8 @@ import {
 import axios from "axios";
 import { useAudioAnalyzer } from "../hooks/useAudioAnalyzer";
 
-const streamUrl = "http://localhost:3001/music/stream";
-const metadataUrl = "http://localhost:3001/music/music-info";
+const streamUrl = "https://radio-streaming-api.onrender.com/stream";
+const metadataUrl = "https://radio-streaming-api.onrender.com/music-info";
 
 interface MusicPlayerContextType {
   isPlaying: boolean;

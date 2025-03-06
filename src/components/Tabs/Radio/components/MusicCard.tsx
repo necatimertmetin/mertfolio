@@ -6,7 +6,7 @@ type MusicCardProps = {
   musicDetails?: {
     title: string;
     artist: string;
-    album: string;
+    album: string | null;
     albumArt: string | null;
     duration: number;
   };
