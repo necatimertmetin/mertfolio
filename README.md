@@ -1,50 +1,72 @@
-# React + TypeScript + Vite
+# Mertfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<img src="public/lion.png" alt="Mertfolio" width="200" height="auto">
 
-Currently, two official plugins are available:
+*A modern and sleek portfolio website built with React, TypeScript, and Material UI.*
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Live Demo
+🔗 [Mertfolio Live](https://necatimertmetin.github.io/mertfolio)
 
-## Expanding the ESLint configuration
+## 📌 Features
+- 🌟 **Modern UI/UX** with a clean and minimalistic design
+- ⚡ **Fast & Responsive** for all devices
+- 🎨 **Theme Customization** (Dark & Light Mode)
+- 🛠 **Built with React & TypeScript**
+- 📂 **Showcases GitHub Projects Dynamically**
+- 📧 **Integrated Contact Form**
+- 🚀 **Optimized Performance** for SEO & speed
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 🛠️ Technologies Used
+- **Frontend:** React (Vite) + TypeScript + Material UI (MUI)
+- **State Management:** React Context API
+- **Animations:** Framer Motion
+- **Hosting:** GitHub Pages
 
-- Configure the top-level `parserOptions` property like this:
+## 🖥️ Installation & Setup
+```bash
+# Clone the repository
+git clone https://github.com/necatimertmetin/mertfolio.git
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+# Navigate into the project
+d cd mertfolio
+
+# Install dependencies
+yarn install   # or npm install
+
+# Start the development server
+yarn dev       # or npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+## 📁 Folder Structure
 ```
+📦 mertfolio
+├── 📂 src
+│   ├── 📂 components  # Reusable UI components
+│   ├── 📂 pages       # Page components (Home, Projects, About, etc.)
+│   ├── 📂 assets      # Images, icons, and other assets
+│   ├── 📂 context     # Global state management
+│   ├── 📂 hooks       # Custom React hooks
+│   ├── 📂 styles      # Global styles & themes
+│   ├── App.tsx       # Main application component
+│   └── main.tsx      # Entry point
+└── package.json      # Project dependencies
+```
+
+## 🌍 Deployment
+This project is deployed using **GitHub Pages**. To deploy your changes:
+```bash
+yarn build       # or npm run build
+yarn deploy      # or npm run deploy
+```
+
+## 🎯 To-Do List
+- [ ] Add a blog section
+- [ ] Improve accessibility & performance
+- [ ] Add more animations
+
+## 📩 Contact
+📧 **Email:** necatimertmetin@gmail.com  
+
+---
+Made with ❤️ by **Mert Metin**
+
