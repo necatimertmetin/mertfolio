@@ -83,7 +83,17 @@ export const MusicPlayerProvider = ({
 
   // Add this inside your `useEffect` or event handler for user gestures
   const handleUserGesture = () => {
+    // Initialize the AudioContext if not already initialized
     initializeAudioContext();
+
+    // Resume the AudioContext if it was previously suspended
+    if (audioContextRef.current?.state === "suspended") {
+      audioContextRef.current.resume().then(() => {
+        console.log("AudioContext resumed.");
+      });
+    }
+
+    // Toggle play
     togglePlay();
   };
 
