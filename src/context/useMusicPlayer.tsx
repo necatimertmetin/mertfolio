@@ -16,6 +16,7 @@ interface MusicPlayerContextType {
   isPlaying: boolean;
   togglePlay: () => void;
   volume: number;
+  handleUserGesture: () => void;
   setVolume: (volume: number) => void;
   duration: number;
   currentTime: number;
@@ -67,6 +68,24 @@ export const MusicPlayerProvider = ({
   const [volume, setVolume] = useState<number>(
     storedVolume ? parseFloat(storedVolume) : 0.1
   );
+
+  const audioContextRef = useRef<AudioContext | null>(null);
+
+  const initializeAudioContext = () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext();
+    }
+  };
+
+  useEffect(() => {
+    console.log("Audio element:", streamAudioRef.current);
+  }, [streamAudioRef.current]);
+
+  // Add this inside your `useEffect` or event handler for user gestures
+  const handleUserGesture = () => {
+    initializeAudioContext();
+    togglePlay();
+  };
 
   // Initialize audio when the component is mounted
   useEffect(() => {
@@ -125,12 +144,14 @@ export const MusicPlayerProvider = ({
   const togglePlay = useCallback(() => {
     setIsPlaying((prev) => {
       const streamAudio = streamAudioRef.current;
-      if (!prev && streamAudio && streamAvailable) {
+      if (!prev && streamAudio) {
         streamAudio
           .play()
-          .catch((err) => console.error("Error playing audio:", err));
+          .then(() => console.log("Playback started"))
+          .catch((err) => console.error("Playback error:", err));
       } else if (streamAudio) {
         streamAudio.pause();
+        console.log("Playback paused");
       }
       return !prev;
     });
@@ -147,6 +168,7 @@ export const MusicPlayerProvider = ({
         isPlaying,
         togglePlay,
         volume,
+        handleUserGesture,
         setVolume,
         duration,
         currentTime,

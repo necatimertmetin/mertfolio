@@ -11,7 +11,7 @@ export const ActionButtons = ({
   playlistVisible = false,
   onListButtonClick,
 }: ActionButtonsProps) => {
-  const { isPlaying, setVolume, togglePlay, volume } = useMusicPlayer();
+  const { isPlaying, setVolume, handleUserGesture, volume } = useMusicPlayer();
   return (
     <Stack
       direction={"row"}
@@ -20,7 +20,7 @@ export const ActionButtons = ({
       spacing={5}
     >
       <Button
-        onClick={togglePlay}
+        onClick={handleUserGesture}
         disableRipple
         color="secondary"
         sx={{
